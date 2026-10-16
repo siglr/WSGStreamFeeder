@@ -42,8 +42,8 @@ internal static class PanelPresentation
         "ground_native" => "ELEV", "heading" => "HDG",
         "track" => "TRK", "speed" => "GS", "ias" => "IAS", "tas" => "TAS",
         "vspeed" => "V/SPD", "wind" => "WIND",
-        "wind_vertical" => "AIR ↑", "weight" => "WT", "flaps" => "FLAPS",
-        "maccready" => "MC", "temperature" => "TEMP", "pressure" => "PRESS",
+        "netto" => "NETTO", "weight" => "WT", "flaps" => "FLAPS",
+        "temperature" => "TEMP", "pressure" => "PRESS",
         "gear" => "GEAR", "on_ground" => "STATE",
         "sim_rate" => "SIM", _ => id
     };

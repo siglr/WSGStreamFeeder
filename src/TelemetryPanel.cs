@@ -94,7 +94,7 @@ internal sealed class TelemetryPanel : Control
         g.FillRectangle(background, rail);
         var end = rail.Left + rail.Width * (float)scale.Position;
         var green = Color.FromArgb(42, 169, 101); var amber = Color.FromArgb(232, 161, 36); var red = Color.FromArgb(216, 58, 58);
-        if (id == "vspeed")
+        if (id is "vspeed" or "netto")
         {
             var center = rail.Left + rail.Width / 2;
             if (Math.Abs(end - center) > .01)
@@ -105,7 +105,7 @@ internal sealed class TelemetryPanel : Control
             }
             g.DrawLine(outline, center, rail.Top, center, rail.Bottom);
         }
-        else if (id is "weight" or "ias" or "speed" or "maccready" || id == "tas" && scale.Warning)
+        else if (id is "weight" or "ias" or "speed" || id == "tas" && scale.Warning)
         {
             using var fill = new SolidBrush(scale.Warning ? red : Color.FromArgb(37, 139, 210));
             g.FillRectangle(fill, rail.Left, rail.Top, end - rail.Left, rail.Height);

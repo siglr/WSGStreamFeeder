@@ -8,7 +8,7 @@ public struct FlightData
 {
     public double Altitude, IndicatedAltitude, Heading, GroundSpeed, VerticalSpeed;
     public double Agl, Tas, Ias, WindX, WindY, WindZ, Weight, FlapIndex, FlapCount;
-    public double GroundAltitude, MacCready, Temperature, Pressure, Track, Wingspan;
+    public double GroundAltitude, Temperature, Pressure, Track, Wingspan;
     public double OnGround, Gear, Slew, SimTime, SimRate, CameraState;
 
     // Field order and units are the wire contract, checked against structure offsets in tests.
@@ -29,7 +29,6 @@ public struct FlightData
         (nameof(FlapIndex), "FLAPS HANDLE INDEX", "number"),
         (nameof(FlapCount), "FLAPS NUM HANDLE POSITIONS", "number"),
         (nameof(GroundAltitude), "GROUND ALTITUDE", "meters"),
-        (nameof(MacCready), "VARIOMETER MAC CREADY SETTING", "meters per second"),
         (nameof(Temperature), "AMBIENT TEMPERATURE", "celsius"),
         (nameof(Pressure), "AMBIENT PRESSURE", "millibars"),
         (nameof(Track), "GPS GROUND TRUE TRACK", "degrees"),
@@ -70,10 +69,9 @@ public static class Channels
         new("vspeed", "Vertical speed", "vspeed.txt", "Vertical", "MSFS vertical speed; centered climb/descent gauge with ±5 m/s display range; not TE/netto"),
         new("wind_speed", "Wind speed", "wind_speed.txt", "Wind", "Horizontal wind from X/Z components"),
         new("wind_direction", "Wind from", "wind_direction.txt", "Angle", "True bearing wind comes from; arrow points downwind"),
-        new("wind_vertical", "Vertical air mass", "wind_vertical.txt", "Vertical", "Ambient vertical wind; not instrument netto"),
+        new("netto", "Netto (NB21)", "netto.txt", "Vertical", "MSFS AMBIENT WIND Y, the source of NB21's IGC NET field; centered square-root ±5 m/s gauge; not an aircraft-specific instrument reading"),
         new("weight", "Total weight", "weight.txt", "Weight", "Current total aircraft mass; not ballast quantity"),
         new("flaps", "Flaps", "flaps.txt", "Index", "Catalog label, otherwise native zero-based handle index"),
-        new("maccready", "MacCready", "maccready.txt", "Vertical", "Selected expected climb setting; blue 0–5 m/s display range, not a live climb reading; aircraft support varies"),
         new("temperature", "Temperature", "temperature.txt", "Temperature", "Ambient air temperature"),
         new("pressure", "Pressure", "pressure.txt", "Pressure", "Ambient air pressure"),
         new("gear", "Landing gear", "gear.txt", "State", "Gear handle position"),
@@ -115,16 +113,16 @@ public static class Readings
                     "ias" => d.Ias, "tas" => d.Tas, "vspeed" => d.VerticalSpeed,
                     "wind_speed" => Math.Sqrt(d.WindX * d.WindX + d.WindZ * d.WindZ),
                     "wind_direction" => d.WindX == 0 && d.WindZ == 0 ? null : (Math.Atan2(d.WindX, d.WindZ) * 180 / Math.PI + 540) % 360,
-                    "wind_vertical" => d.WindY, "weight" => d.Weight,
+                    "netto" => d.WindY, "weight" => d.Weight,
                     "flaps" => metadata?.HasFlaps != false && d.FlapCount > 1 && d.FlapIndex >= 0 && d.FlapIndex < (metadata?.FlapCount ?? d.FlapCount) && d.FlapIndex == Math.Truncate(d.FlapIndex) ? d.FlapIndex : null,
-                    "maccready" => d.MacCready, "temperature" => d.Temperature,
+                    "temperature" => d.Temperature,
                     "pressure" => d.Pressure,
                     "gear" => d.Gear, "on_ground" => d.OnGround, "sim_rate" => d.SimRate,
                     _ => null
                 };
             }
             if (value is { } invalid && !double.IsFinite(invalid)) value = null;
-            if (value < 0 && channel.Id is "ias" or "tas" or "speed" or "wind_speed" or "maccready") value = null;
+            if (value < 0 && channel.Id is "ias" or "tas" or "speed" or "wind_speed") value = null;
             if (value <= 0 && channel.Id is "weight" or "pressure" or "sim_rate") value = null;
             var unit = Unit(channel.Category, preferences);
             var text = "N/A";
@@ -148,7 +146,7 @@ public static class Readings
                     var rounded = Math.Round(display, preferences.VerticalSpeed == "ft/min" ? 0 : 1);
                     text = rounded > 0 ? "▴ " + text : rounded < 0 ? "▾ " + text.TrimStart('-') : "0";
                 }
-                else if (channel.Id == "wind_vertical")
+                else if (channel.Id == "netto")
                 {
                     var rounded = Math.Round(display, preferences.VerticalSpeed == "ft/min" ? 0 : 1);
                     if (rounded == 0) text = preferences.VerticalSpeed == "ft/min" ? "0" : "0.0";

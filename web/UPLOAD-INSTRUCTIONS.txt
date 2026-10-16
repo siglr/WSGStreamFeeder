@@ -1,4 +1,4 @@
-WSG Stream Feeder 1.3.6 — upload into /otherdata/tools/ on WeSimGlide.org
+WSG Stream Feeder 1.3.7 — upload into /otherdata/tools/ on WeSimGlide.org
 
 1. Upload WSG-Stream-Feeder.zip.
 2. Upload tools.css, feeder.js and assets first, then index.html, WSG-Stream-Feeder.html and .htaccess.

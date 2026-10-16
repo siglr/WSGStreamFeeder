@@ -222,7 +222,7 @@ internal sealed partial class FeederForm
         Altitude = 1800, IndicatedAltitude = 1810, Heading = 274, GroundSpeed = 32,
         VerticalSpeed = 1.6, Agl = 650, Tas = 35, Ias = 32, WindX = 0, WindZ = 6,
         WindY = 2.4, Weight = 540, FlapIndex = 3, FlapCount = 7, GroundAltitude = 1150,
-        MacCready = 1.5, Temperature = 12, Pressure = 820, Track = 280, Wingspan = 18,
+        Temperature = 12, Pressure = 820, Track = 280, Wingspan = 18,
         OnGround = 0, Gear = 0, SimRate = 1
     };
     private void UpdatePanel(TelemetryPanel panel)

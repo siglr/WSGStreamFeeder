@@ -16,10 +16,10 @@ public static class GaugeScales
                 var iasRange = metadata?.VneTasKph is > 0 and var reference && double.IsFinite(reference) ? reference * 1.1 / 3.6 : 300 / 3.6;
                 return new(Math.Clamp(v / iasRange, 0, 1), false, v < 0, v > iasRange);
             case "speed": return new(Math.Clamp(v / (400 / 3.6), 0, 1), false, v < 0, v > 400 / 3.6);
-            case "maccready": return new(Math.Clamp(v / 5, 0, 1), false, v < 0, v > 5);
             case "weight" when metadata?.MaxWeightKg is > 0 and var maximum && double.IsFinite(maximum):
                 return new(Math.Clamp((v - maximum * .45) / (maximum * .55), 0, 1), v > maximum);
             case "vspeed":
+            case "netto":
                 var visual = Math.Round(Readings.Convert(v, "Vertical", preferences), preferences.VerticalSpeed == "ft/min" ? 0 : 1) == 0 ? 0 : v;
                 return new(.5 + Math.Sign(visual) * Math.Sqrt(Math.Min(Math.Abs(visual), 5) / 5) / 2, false, v < -5, v > 5);
             default: return null;

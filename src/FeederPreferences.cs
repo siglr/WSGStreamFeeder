@@ -39,7 +39,8 @@ public sealed class FeederPreferences
     }
     private static string MigrateChannel(string id) => id switch
     {
-        "altitude" => "altitude_asl", "ground_asl" => "ground_native", "climb" => "vspeed", _ => id
+        "altitude" => "altitude_asl", "ground_asl" => "ground_native", "climb" => "vspeed",
+        "maccready" or "wind_vertical" => "netto", _ => id
     };
     public static FeederPreferences Load(string path, out string? error)
     {

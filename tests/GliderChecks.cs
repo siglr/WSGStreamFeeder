@@ -18,8 +18,9 @@ static class GliderChecks
         Check(PanelPresentation.AircraftName(" JS3-18 ", " ") == "JS3-18", "blank catalog name falls back to trimmed simulator model");
         Check(PanelPresentation.AircraftName(null, null) == "Your glider", "missing model uses neutral heading rather than a livery title");
         Check(PanelPresentation.AircraftName("TT:ATCCOM.AC_MODEL_EXAMPLE.0.text", null) == "Your glider", "unresolved model localization token is not shown");
-        Check(Marshal.SizeOf<FlightData>() == 26 * 8 && FlightData.Definition.Length == 26, "26 numeric fields match SimConnect payload size");
+        Check(Marshal.SizeOf<FlightData>() == 25 * 8 && FlightData.Definition.Length == 25, "25 numeric fields match SimConnect payload size");
         Check(FlightData.Definition.Select((f, i) => Marshal.OffsetOf<FlightData>(f.Field).ToInt32() == i * 8).All(x => x), "every SimConnect field matches its declared wire offset");
+        Check(FlightData.Definition.Single(f => f.Field == nameof(FlightData.WindY)) == (nameof(FlightData.WindY), "AMBIENT WIND Y", "meters per second"), "NB21 NET source is requested as ambient vertical wind in metres per second");
         var prefs = new FeederPreferences();
         var d = new FlightData { Altitude = 1000, IndicatedAltitude = 1100, Agl = 152.4, Heading = 359.8, GroundSpeed = 50,
             VerticalSpeed = -2, Tas = 60, Ias = 55, WindX = 3, WindZ = 4, WindY = 20, Weight = 606,
@@ -74,14 +75,34 @@ static class GliderChecks
         }
         Check(GaugeScales.Calculate("tas", 70, prefs, null) == null && GaugeScales.Calculate("weight", 500, prefs, null) == null, "unknown aircraft never gets invented reference scales");
         Check(GaugeScales.Calculate("tas", 240 / 3.6, prefs, metadata)?.Warning == false && GaugeScales.Calculate("tas", 240.001 / 3.6, prefs, metadata)?.Warning == true, "TAS warning uses unrounded value and strict VNE boundary");
-        Check(Near(GaugeScales.Calculate("maccready", 2.5, prefs, null)?.Position, .5), "MacCready setting uses 0–5 m/s reference scale");
-        Check(GaugeScales.Calculate("maccready", 6, prefs, null) is { Position: 1, Warning: false, HighOverflow: true }, "MC scale overflow is not an aircraft warning");
+        foreach (var (value, expected) in new[] { (-5d, 0d), (-1.25, .25), (0d, .5), (1.25, .75), (5d, 1d) })
+            Check(Near(GaugeScales.Calculate("netto", value, prefs, null)?.Position, expected), "NB21 netto uses centered square-root scale at " + value);
+        Check(GaugeScales.Calculate("netto", 6, prefs, null) is { Position: 1, Warning: false, HighOverflow: true } && GaugeScales.Calculate("netto", -6, prefs, null) is { Position: 0, LowOverflow: true }, "netto lift and sink beyond range show overflow markers");
         Check(Near(GaugeScales.Calculate("speed", 200 / 3.6, prefs, metadata)?.Position, .5), "groundspeed range is independent of TAS VNE");
         Check(GaugeScales.Calculate("speed", 450 / 3.6, prefs, metadata) is { Warning: false, HighOverflow: true }, "high groundspeed does not invent an overspeed warning");
         Check(Near(GaugeScales.Calculate("ias", 120 / 3.6, prefs, metadata)?.Position, .5 / 1.1), "IAS shares TAS visual range when reference exists");
         Check(GaugeScales.Calculate("ias", 300 / 3.6, prefs, metadata) is { Warning: false, HighOverflow: true }, "IAS does not treat catalog TAS VNE as an IAS redline");
         Check(Near(GaugeScales.Calculate("ias", 150 / 3.6, prefs, null)?.Position, .5), "unknown aircraft still gets neutral IAS bar");
-        Check(GaugeScales.Calculate("maccready", null, prefs, null) == null, "unavailable MC does not draw a setting");
+        Check(GaugeScales.Calculate("netto", null, prefs, null) == null, "unavailable netto does not draw a reading");
+        var nettoPrefs = new FeederPreferences { VerticalSpeed = "m/s", TextChannels = ["netto"], IncludeUnits = true };
+        var nettoSample = d; nettoSample.WindY = -1.5; nettoSample.VerticalSpeed = 3;
+        var nettoReadings = Readings.Create(nettoSample, nettoPrefs);
+        Check(Near(nettoReadings["netto"].Value, -1.5) && Near(nettoReadings["vspeed"].Value, 3), "netto follows NB21 vertical wind independently of glider vertical speed");
+        Check(Readings.Files(nettoReadings, nettoPrefs)["netto.txt"] == "-1.5 m/s" && PanelPresentation.Label("netto") == "NETTO", "netto export and panel share signed value and explicit label");
+        foreach (var (unit, expected) in new[] { ("ft/min", "-295 ft/min"), ("kt", "-2.9 kt") })
+        {
+            nettoPrefs.VerticalSpeed = unit;
+            Check(Readings.Files(Readings.Create(nettoSample, nettoPrefs), nettoPrefs)["netto.txt"] == expected, "netto respects selected vertical-rate unit " + unit);
+        }
+        nettoPrefs.VerticalSpeed = "m/s"; nettoSample.WindY = 6;
+        Check(Readings.Create(nettoSample, nettoPrefs)["netto"].Display == "+6.0 m/s", "netto numeric reading remains unclamped above gauge limit");
+        nettoSample.WindY = 0;
+        Check(Readings.Create(nettoSample, nettoPrefs)["netto"].Text == "0.0", "zero netto remains a valid neutral reading");
+        nettoSample.WindY = double.NaN;
+        Check(Readings.Create(nettoSample, nettoPrefs)["netto"].Text == "N/A", "invalid netto is unavailable rather than false zero");
+        var nettoMigration = new FeederPreferences { PanelChannels = ["vspeed", "maccready", "tas", "wind_vertical"], TextChannels = ["wind_vertical", "maccready", "heading"] };
+        nettoMigration.Normalize();
+        Check(nettoMigration.PanelChannels.SequenceEqual(new[] { "vspeed", "netto", "tas" }) && nettoMigration.TextChannels.SequenceEqual(new[] { "netto", "heading" }), "MC and vertical-air-mass choices migrate to one NETTO channel preserving order and independent outputs");
         Check(PanelPresentation.ArrowBearing("heading", 90) == 90 && PanelPresentation.ArrowBearing("track", 270) == 270 && PanelPresentation.ArrowBearing("wind", 90) == 270, "HDG/TRK arrows point toward bearing, wind arrow remains downwind");
         Check(PanelPresentation.ArrowBearing("heading", null) == null && PanelPresentation.ArrowBearing("track", double.NaN) == null, "missing bearings never display invented arrows");
         var retired = new FeederPreferences { TextChannels = ["wingspan", "tas"], PanelChannels = ["wingspan", "ias"] };

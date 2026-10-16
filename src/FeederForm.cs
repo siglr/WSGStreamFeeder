@@ -97,7 +97,7 @@ internal sealed partial class FeederForm : Form
             if (!outputs.ContainsKey(channel.File) && File.Exists(Path.Combine(options.OutputDirectory, channel.File)))
                 outputs[channel.File] = "N/A";
         // Retired preview export: clear a stale value without creating or deleting a file.
-        foreach (var retiredFile in new[] { "wingspan.txt", "altitude.txt", "ground_asl.txt", "climb_geometric.txt" })
+        foreach (var retiredFile in new[] { "wingspan.txt", "altitude.txt", "ground_asl.txt", "climb_geometric.txt", "maccready.txt", "wind_vertical.txt" })
             if (File.Exists(Path.Combine(options.OutputDirectory, retiredFile))) outputs[retiredFile] = "N/A";
         var error = writer.Write(outputs);
         ShowState(error == null ? connectionStatus : "Cannot update output; retrying. " + error);
