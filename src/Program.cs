@@ -57,7 +57,7 @@ internal static class Program
             if (!first)
             {
                 if (options.DiagnosticSeconds == 0)
-                    MessageBox.Show("WSG Stream Feeder is already running for this output folder. Open it from the system tray.", "WSG Stream Feeder");
+                    MessageBox.Show("WSG Stream Feeder is already running for this output folder. Restore its window from the taskbar.", "WSG Stream Feeder");
                 return 2;
             }
             using var form = new FeederForm(options);

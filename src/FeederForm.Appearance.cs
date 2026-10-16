@@ -54,8 +54,8 @@ internal sealed partial class FeederForm
         var sidebar = Grid();
         sidebar.Tag = "sidebar";
         sidebar.Padding = new Padding(18, 22, 18, 18);
-        sidebar.RowCount = 10;
-        foreach (var height in new[] { 78, 28, 44, 44, 28, 40, 0, 28, 40, 44 })
+        sidebar.RowCount = 9;
+        foreach (var height in new[] { 78, 28, 44, 28, 40, 0, 28, 40, 44 })
             sidebar.RowStyles.Add(new RowStyle(height == 0 ? SizeType.Percent : SizeType.Absolute, height == 0 ? 100 : height));
         shell.Controls.Add(sidebar, 0, 0);
         var brand = Grid(2);
@@ -68,8 +68,7 @@ internal sealed partial class FeederForm
         sidebar.Controls.Add(brand, 0, 0);
         sidebar.Controls.Add(LabelFor("STREAM", 8, true, "muted"), 0, 1);
         sidebar.Controls.Add(ActionButton("Open output folder", (_, _) => OpenFolder(), true), 0, 2);
-        sidebar.Controls.Add(ActionButton("Minimize to tray", (_, _) => Hide()), 0, 3);
-        sidebar.Controls.Add(LabelFor("APPEARANCE", 8, true, "muted"), 0, 4);
+        sidebar.Controls.Add(LabelFor("APPEARANCE", 8, true, "muted"), 0, 3);
         var themes = Grid(2);
         themes.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
         themes.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
@@ -80,8 +79,8 @@ internal sealed partial class FeederForm
         lightButton.Click += (_, _) => SetTheme(true);
         themes.Controls.Add(darkButton, 0, 0);
         themes.Controls.Add(lightButton, 1, 0);
-        sidebar.Controls.Add(themes, 0, 5);
-        sidebar.Controls.Add(LabelFor("WESIMGLIDE", 8, true, "muted"), 0, 7);
+        sidebar.Controls.Add(themes, 0, 4);
+        sidebar.Controls.Add(LabelFor("WESIMGLIDE", 8, true, "muted"), 0, 6);
         var about = new LinkLabel
         {
             Text = "About  ↗", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft,
@@ -89,8 +88,8 @@ internal sealed partial class FeederForm
             AccessibleName = "About — opens WeSimGlide.org", Margin = Padding.Empty
         };
         about.LinkClicked += (_, _) => OpenAbout();
-        sidebar.Controls.Add(about, 0, 8);
-        sidebar.Controls.Add(ActionButton("Exit", (_, _) => Close()), 0, 9);
+        sidebar.Controls.Add(about, 0, 7);
+        sidebar.Controls.Add(ActionButton("Exit", (_, _) => Close()), 0, 8);
 
         var main = Grid();
         main.Padding = new Padding(24, 24, 24, 16);
@@ -198,13 +197,6 @@ internal sealed partial class FeederForm
         darkButton.AccessibleDescription = palette.Dark ? "Selected theme" : "Switch to dark theme";
         lightButton.AccessibleDescription = !palette.Dark ? "Selected theme" : "Switch to light theme";
         ApplyColors(this);
-        if (tray?.ContextMenuStrip is { } menu)
-        {
-            menu.Renderer = new ToolStripProfessionalRenderer(new WsgMenuColors(palette));
-            menu.BackColor = palette.Sidebar;
-            menu.ForeColor = palette.Text;
-            foreach (ToolStripItem item in menu.Items) item.ForeColor = palette.Text;
-        }
         ApplyTitleBar();
         ResumeLayout(true);
         Invalidate(true);

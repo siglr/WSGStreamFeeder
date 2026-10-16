@@ -14,9 +14,9 @@ Public, source-available software licensed under **PolyForm Noncommercial 1.0.0*
 
 Download and extract the complete release ZIP into a writable folder. Windows x64 and the .NET 8 Desktop Runtime (x64) are required.
 
-Launch `WSG Stream Feeder.exe`. It automatically connects when MSFS is available, retries every five seconds, and requests telemetry once per second. Minimize it to the notification area; double-click its tray icon to see status. **Exit** or the window's close button stops the feeder and writes `N/A` to its four files. Normal Windows minimize hides it to the tray.
+Launch `WSG Stream Feeder.exe`. It automatically connects when MSFS is available, retries every five seconds, and requests telemetry once per second. Minimize it to the regular Windows taskbar and restore it from there. **Exit** or the window's close button stops the feeder and writes `N/A` to its four files. It continues feeding OBS while minimized.
 
-The window uses WSG Client's colors and original app logo. Choose **Dark** or **Light** under **Appearance**; your selection is remembered in `%LOCALAPPDATA%\WSG Stream Feeder\theme.txt`. The **About** link opens [WeSimGlide.org](https://WeSimGlide.org/) in your default browser; it is also available from the tray menu.
+The window uses WSG Client's colors and original app logo. Choose **Dark** or **Light** under **Appearance**; your selection is remembered in `%LOCALAPPDATA%\WSG Stream Feeder\theme.txt`. The **About** link opens [WeSimGlide.org](https://WeSimGlide.org/) in your default browser.
 
 ## Automatic updates
 
@@ -30,7 +30,7 @@ Output defaults to an `Output` subfolder beside the EXE. To customize it, copy t
 
 In OBS, edit each of your four text sources, keep **Read from file** enabled, and browse to its matching file in this new folder. The filenames are unchanged. StreamFlight can be uninstalled; the feeder and its output are independent of the StreamFlight folder.
 
-To use another output location, edit `OutputDirectory` in `settings.json` and update the four OBS text sources to that folder. Alternatively launch with `--output "C:\some\folder"`. Relative paths are resolved beside the EXE. Launch with `--minimized` to start in the tray. A second feeder using the same output path is rejected. If you explicitly choose the old `C:\MSFS2024\Apps and Mods\StreamFlight\Output` location, the feeder waits while StreamFlight is running to prevent conflicting writes.
+To use another output location, edit `OutputDirectory` in `settings.json` and update the four OBS text sources to that folder. Alternatively launch with `--output "C:\some\folder"`. Relative paths are resolved beside the EXE. Launch with `--minimized` to start minimized on the taskbar. A second feeder using the same output path is rejected. If you explicitly choose the old `C:\MSFS2024\Apps and Mods\StreamFlight\Output` location, the feeder waits while StreamFlight is running to prevent conflicting writes.
 
 ## File contract
 

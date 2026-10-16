@@ -12,7 +12,7 @@ internal sealed partial class FeederForm
         if (checkingForUpdates || shuttingDown || options.DiagnosticSeconds > 0) return;
         if (updateReady)
         {
-            try { AppUpdate.Launch(AppContext.BaseDirectory, false, options.OutputDirectory, !Visible); Close(); }
+            try { AppUpdate.Launch(AppContext.BaseDirectory, false, options.OutputDirectory, WindowState == FormWindowState.Minimized); Close(); }
             catch (Exception ex) { Log.Write("Update restart failed: " + ex); updateStatus.Text = "Unable to restart for update. See updater log."; }
             return;
         }
@@ -30,7 +30,7 @@ internal sealed partial class FeederForm
                     updateReady = true;
                     updateButton.Text = "Restart to update";
                 }
-            }, () => !shuttingDown && connection == null, options.OutputDirectory, () => !Visible);
+            }, () => !shuttingDown && connection == null, options.OutputDirectory, () => WindowState == FormWindowState.Minimized);
             if (restart && !shuttingDown) Close();
         }
         catch (Exception ex) { Log.Write("Update check failed: " + ex); }

@@ -13,7 +13,6 @@ internal sealed partial class FeederForm : Form
     private readonly OutputWriter writer;
     private readonly System.Windows.Forms.Timer timer = new() { Interval = 1000 };
     private readonly Stopwatch lifetime = Stopwatch.StartNew();
-    private readonly NotifyIcon tray;
     private SimConnect? connection;
     private OverlayText latest = OverlayText.Unavailable;
     private long nextConnect;
@@ -31,28 +30,19 @@ internal sealed partial class FeederForm : Form
         this.options = options;
         writer = new OutputWriter(options.OutputDirectory);
         InitializeAppearance();
-        var menu = new ContextMenuStrip { ShowImageMargin = false };
-        menu.Items.Add("Show status", null, (_, _) => ShowStatus());
-        menu.Items.Add("Open output folder", null, (_, _) => OpenFolder());
-        menu.Items.Add("About — WeSimGlide.org", null, (_, _) => OpenAbout());
-        menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add("Exit", null, (_, _) => Close());
-        tray = new NotifyIcon { Icon = Icon, Text = "WSG Stream Feeder", ContextMenuStrip = menu, Visible = true };
         ApplyAppearance();
-        tray.DoubleClick += (_, _) => ShowStatus();
-        Resize += (_, _) => { if (WindowState == FormWindowState.Minimized) Hide(); };
+        ShowInTaskbar = true;
+        if (options.Minimized) WindowState = FormWindowState.Minimized;
         timer.Tick += (_, _) => Tick();
         Shown += (_, _) =>
         {
             Log.Write("Started. Output: " + options.OutputDirectory);
-            if (options.Minimized) Hide();
             Tick();
             timer.Start();
             _ = CheckForUpdatesAsync();
         };
     }
 
-    private void ShowStatus() { Show(); WindowState = FormWindowState.Normal; Activate(); }
     private void OpenFolder()
     {
         try
@@ -205,9 +195,6 @@ internal sealed partial class FeederForm : Form
             var error = writer.Write(OverlayText.Unavailable);
             if (error != null) Log.Write("Final output write failed: " + error);
         }
-        tray.Visible = false;
-        tray.ContextMenuStrip?.Dispose();
-        tray.Dispose();
         timer.Dispose();
         logo.Image?.Dispose();
         appIcon.Dispose();

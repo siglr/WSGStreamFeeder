@@ -106,15 +106,3 @@ internal sealed class WsgButton : Button
             (Centered ? TextFormatFlags.HorizontalCenter : TextFormatFlags.Left));
     }
 }
-
-internal sealed class WsgMenuColors(Palette palette) : ProfessionalColorTable
-{
-    public override Color ToolStripDropDownBackground => palette.Sidebar;
-    public override Color MenuBorder => palette.Line;
-    public override Color MenuItemBorder => palette.Line;
-    public override Color MenuItemSelected => palette.Button;
-    public override Color MenuItemSelectedGradientBegin => palette.Button;
-    public override Color MenuItemSelectedGradientEnd => palette.Button;
-    public override Color SeparatorDark => palette.Line;
-    public override Color SeparatorLight => palette.Line;
-}
