@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../src/WindowPlacement.cs" Link="WindowPlacement.cs" />
     <Compile Include="../src/FlightData.cs" Link="FlightData.cs" />
     <Compile Include="../src/FeederPreferences.cs" Link="FeederPreferences.cs" />
     <Compile Include="../src/PanelPresentation.cs" Link="PanelPresentation.cs" />

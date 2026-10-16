@@ -79,6 +79,7 @@ finally
     if (Directory.Exists(root)) Directory.Delete(root, true);
 }
 count += await GliderChecks.Run();
+count += WindowPlacementChecks.Run();
 Console.WriteLine($"All {count} checks passed.");
 
 // A test-only view of the four default filenames, sourced from the production formatter.

@@ -17,6 +17,7 @@ internal sealed class CaptureForm : Form
         Controls.Add(panel);
         ClientSize = panel.ContentSize;
         FitContent();
+        WindowPlacementBinding.Attach(this, "capture-window.json", fitContent: FitContent);
     }
 
     // Height follows rows/DPI/settings, never the user's resize gesture.

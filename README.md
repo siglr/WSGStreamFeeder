@@ -4,6 +4,8 @@ A small Windows x64 application that reads MSFS 2024 through Microsoft's SimConn
 
 **v1.3.0:** selectable glider telemetry, shared unit settings, aircraft reference gauges and a compact OBS capture window. When upgrading, repoint an old altitude text source from `altitude.txt` to `altitude_asl.txt`.
 
+**v1.3.1:** the main window remembers its position, size and maximized state. The capture window separately remembers position and width; its height still follows the selected rows. Placement is saved after moving/resizing and on close in `%LOCALAPPDATA%\WSG Stream Feeder\main-window.json` and `capture-window.json`. Closing while minimized preserves the normal bounds. Windows return to a visible screen if a saved monitor is unavailable.
+
 [Download the latest release](https://github.com/siglr/WSGStreamFeeder/releases/latest) · [WeSimGlide download page](https://wesimglide.org/otherdata/tools/WSG-Stream-Feeder.html) · [License](LICENSE.md)
 
 ![WSG Stream Feeder in Dark mode](web/assets/wsg-stream-feeder.png)

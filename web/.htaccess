@@ -21,3 +21,21 @@
         Header always unset Expires
     </FilesMatch>
 </IfModule>
+
+# Merge this block into /otherdata/tools/.htaccess, preserving other tools' rules.
+# BEGIN Standalone Glass cache policy
+<IfModule mod_headers.c>
+    <Files "Standalone-DLSS-Glass-Cockpit-Refresh.html">
+        Header onsuccess unset Cache-Control
+        Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
+        Header onsuccess unset Expires
+        Header always unset Expires
+    </Files>
+    <FilesMatch "^Standalone-DLSS-Glass-Cockpit-Refresh\.(version\.json|zip|zip\.sha256)$">
+        Header onsuccess unset Cache-Control
+        Header always set Cache-Control "no-store"
+        Header onsuccess unset Expires
+        Header always unset Expires
+    </FilesMatch>
+</IfModule>
+# END Standalone Glass cache policy
