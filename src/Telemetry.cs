@@ -32,7 +32,7 @@ public static class TelemetryFormatter
 
     public static OverlayText Format(Telemetry data)
     {
-        // StreamFlight uses indicated altitude, falling back to geometric altitude.
+        // Prefer indicated altitude, falling back to geometric altitude.
         if (!double.IsFinite(data.AltitudeFeet) || !double.IsFinite(data.GroundSpeedKnots))
             return OverlayText.Unavailable;
         var altitude = double.IsFinite(data.IndicatedAltitudeFeet)

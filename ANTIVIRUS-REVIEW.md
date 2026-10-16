@@ -1,19 +1,19 @@
-# WSG Stream Feeder 1.2.1 — local antivirus review
+# WSG Stream Feeder 1.2.2 — local antivirus review
 
-Reviewed 2026-10-15 at 21:32 EDT after removing system-tray support. Microsoft Defender reported **no threats** for both the final release directory and the final ZIP. Both scans completed with exit code 0.
+Reviewed 2026-10-15 at 21:41 EDT after simplifying product messaging and removing the obsolete external-writer check. Microsoft Defender reported **no threats** for both the final release directory and the final ZIP. Both scans completed with exit code 0.
 
 | Evidence | Result |
 | --- | --- |
 | Engine | Microsoft Defender 1.1.26090.9 |
 | Signatures | 1.461.42.0, updated 2026-10-15 09:12 EDT |
 | Protection | Antivirus and real-time protection enabled |
-| ZIP size | 1,059,748 bytes |
-| ZIP SHA-256 | `1fba13d7c442d8d4d3f5933d5a7151f6639cd1b202217518c9e8b79431e076b8` |
+| ZIP size | 1,059,124 bytes |
+| ZIP SHA-256 | `813b6624869293298eb14664b98db0a6809b0bb54fe71c71893773e1ef0cf5c5` |
 | App and updater Authenticode status | NotSigned |
 | Release authenticity | Both RSA signatures and all 15 managed file hashes verified; ZIP entries verified against inventory |
 | Automated checks | 28 telemetry/output checks and 39 updater checks passed |
 
-Scanned `dist/release-1.2.1` and `dist/upload/WSG-Stream-Feeder.zip` with `MpCmdRun.exe -Scan -ScanType 3 -File <path> -DisableRemediation`. According to the installed command's help, this custom-scan option ignores exclusions, scans archives, reports detections in the console, and does not remediate. It does not turn off real-time protection. Raw console results are retained under `build/defender-release-scan.txt` and `build/defender-zip-scan.txt`. No antivirus settings or exclusions were changed. No sample was submitted to an external scanning website.
+Scanned `dist/release-1.2.2` and `dist/upload/WSG-Stream-Feeder.zip` with `MpCmdRun.exe -Scan -ScanType 3 -File <path> -DisableRemediation`. According to the installed command's help, this custom-scan option ignores exclusions, scans archives, reports detections in the console, and does not remediate. It does not turn off real-time protection. Raw console results are retained under `build/defender-release-scan.txt` and `build/defender-zip-scan.txt`. No antivirus settings or exclusions were changed. No sample was submitted to an external scanning website.
 
 ## Changes made to reduce avoidable suspicion
 

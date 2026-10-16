@@ -1,6 +1,6 @@
 # WSG Stream Feeder
 
-A small Windows x64 application that reads MSFS 2024 through Microsoft's SimConnect API and feeds four OBS text sources. No StreamFlight application, FSUIPC, flight plan, web service, account, or OBS plugin is required.
+A small Windows x64 application that reads MSFS 2024 through Microsoft's SimConnect API and feeds four OBS text sources. No FSUIPC, flight plan, web service, account, or OBS plugin is required.
 
 [Download the latest release](https://github.com/siglr/WSGStreamFeeder/releases/latest) · [WeSimGlide download page](https://wesimglide.org/otherdata/tools/WSG-Stream-Feeder.html) · [License](LICENSE.md)
 
@@ -28,9 +28,9 @@ Keep the complete release together, including `WSG Stream Feeder.Updater.exe`, i
 
 Output defaults to an `Output` subfolder beside the EXE. To customize it, copy the included `settings.example.json` to `settings.json` and change `OutputDirectory`. Development builds include `settings.json` directly.
 
-In OBS, edit each of your four text sources, keep **Read from file** enabled, and browse to its matching file in this new folder. The filenames are unchanged. StreamFlight can be uninstalled; the feeder and its output are independent of the StreamFlight folder.
+In OBS, edit each of your four text sources, keep **Read from file** enabled, and browse to its matching file in the feeder's Output folder.
 
-To use another output location, edit `OutputDirectory` in `settings.json` and update the four OBS text sources to that folder. Alternatively launch with `--output "C:\some\folder"`. Relative paths are resolved beside the EXE. Launch with `--minimized` to start minimized on the taskbar. A second feeder using the same output path is rejected. If you explicitly choose the old `C:\MSFS2024\Apps and Mods\StreamFlight\Output` location, the feeder waits while StreamFlight is running to prevent conflicting writes.
+To use another output location, edit `OutputDirectory` in `settings.json` and update the four OBS text sources to that folder. Alternatively launch with `--output "C:\some\folder"`. Relative paths are resolved beside the EXE. Launch with `--minimized` to start minimized on the taskbar. A second feeder using the same output path is rejected.
 
 ## File contract
 
@@ -45,12 +45,6 @@ Files use UTF-8 without BOM, without a trailing newline, and whole-number roundi
 
 Only changed values are replaced. Completed temporary files are moved over the destination, preventing partial values; if OBS or another reader blocks replacement, the window shows an error and the next tick retries. No unrelated output files are deleted or modified. Diagnostic logs live at `%LOCALAPPDATA%\WSG Stream Feeder\feeder.log`, outside the OBS folder.
 
-## Compatibility finding
-
-Inspection of the locally installed StreamFlight DLL found that it **deletes `heading_true.txt` during output-folder setup**, and its update loop writes only `heading_magnetic.txt`. This explains the missing heading in OBS. This feeder deliberately repairs that behavior: the requested `heading_true.txt` is maintained using the true-heading SimVar and the same whole-degree/degree-symbol style. It does not reproduce the deletion bug.
-
-The other three formats and their SimVars were verified against the installed application. Invalid/infinite numbers are handled defensively. StreamFlight's obsolete heading-file behavior cannot be claimed as byte-for-byte parity for live true heading; that output is an intentional fix.
-
 ## Build and dependencies
 
 Source is in `src`. On Windows, obtain the two SimConnect dependencies described in [lib/README.md](lib/README.md), then run `./build.ps1` with a .NET SDK supporting .NET 8. The published program needs the .NET 8 **Desktop Runtime (x64)**. The SDK is only needed for building.
@@ -59,7 +53,7 @@ Ordinary source builds disable network updates. Run `package-release.ps1 -Signin
 
 The original logo and icon in `assets` were copied from the installed WSG Client's `Web\assets` folder. They are embedded in the executable, so WSG Client does not need to be installed for them to appear. The theme palettes in `src\Appearance.cs` match WSG Client's `Web\styles.css`.
 
-Keep `SimConnect.dll` and `Microsoft.FlightSimulator.SimConnect.dll` beside the EXE. The local build uses copies of Microsoft's SimConnect components from the existing StreamFlight installation, saved under `lib`; it does not load or ship `StreamFlight.dll`. These Microsoft binaries retain their original licensing. For a fresh checkout, obtain the corresponding x64 components from the Microsoft Flight Simulator SDK and place them in `lib`. Do not assume Microsoft binaries can be relicensed as this application's source.
+Keep `SimConnect.dll` and `Microsoft.FlightSimulator.SimConnect.dll` beside the EXE. These Microsoft binaries retain their original licensing. For a fresh checkout, obtain the corresponding x64 components from the Microsoft Flight Simulator SDK and place them in `lib`. Do not assume Microsoft binaries can be relicensed as this application's source.
 
 `build.ps1` runs the executable compatibility and updater checks and publishes to `dist\WSG Stream Feeder`. Tests cover rounding, triangles, units/format selections, invalid input, locale independence, exact bytes, file locks, retry, deletion recovery, disconnect output, signature verification, unsafe archives, rollback, process interruptions, and an actual updater-process handoff. Updater fixtures use ephemeral test keys and temporary folders, never a real MSFS installation. To smoke-test the actual executable without changing OBS files:
 

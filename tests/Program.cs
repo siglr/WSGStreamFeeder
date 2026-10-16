@@ -23,7 +23,7 @@ Check(Marshal.SizeOf<Telemetry>() == 40, "SimConnect payload is five packed doub
 Check(TelemetryFormatter.Format(Sample()) == new OverlayText("12,346", "274°", "124", "▴ 1,235"), "climb formatting and indicated altitude");
 Check(TelemetryFormatter.Format(Sample(vs: -1234.6)).VerticalSpeed == "▾ 1,235", "descent uses down triangle and positive magnitude");
 Check(TelemetryFormatter.Format(Sample(vs: -0.4)).VerticalSpeed == "0", "near-zero vertical speed has no arrow");
-Check(TelemetryFormatter.Format(Sample(altitude: 12344.5, heading: 272.5, speed: 122.5, vs: 1234.5)) == new OverlayText("12,344", "272°", "122", "▴ 1,234"), "midpoints round to even like StreamFlight");
+Check(TelemetryFormatter.Format(Sample(altitude: 12344.5, heading: 272.5, speed: 122.5, vs: 1234.5)) == new OverlayText("12,344", "272°", "122", "▴ 1,234"), "midpoints round to even");
 Check(TelemetryFormatter.Format(Sample(altitude: double.NaN)).Altitude == "12,000", "missing indicated altitude falls back to geometric altitude");
 Check(TelemetryFormatter.Format(Sample(speed: double.NaN)) == OverlayText.Unavailable, "invalid required data yields N/A");
 Check(TelemetryFormatter.Format(Sample(heading: double.NaN)).Heading == "N/A", "invalid heading does not leak NaN into OBS");
@@ -66,7 +66,7 @@ try
     Check(!Directory.GetFiles(root, "*.tmp").Any(), "temporary files are cleaned up after write failure");
     File.WriteAllText(Path.Combine(root, "unrelated.txt"), "leave me alone");
     Check(writer.Write(OverlayText.Unavailable) == null && OverlayText.Unavailable.Files().All(pair => File.ReadAllText(Path.Combine(root, pair.Key)) == "N/A"), "disconnect resets all four files");
-    Check(File.ReadAllText(Path.Combine(root, "unrelated.txt")) == "leave me alone", "other StreamFlight outputs are untouched");
+    Check(File.ReadAllText(Path.Combine(root, "unrelated.txt")) == "leave me alone", "unrelated output files are untouched");
     var blocker = Path.Combine(root, "blocked-folder");
     File.WriteAllText(blocker, "file instead of directory");
     var blockedWriter = new OutputWriter(blocker);

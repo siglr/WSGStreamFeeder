@@ -7,7 +7,6 @@ namespace WsgStreamFeeder;
 internal sealed record Settings(string OutputDirectory);
 internal sealed record Options(string OutputDirectory, bool Minimized, int DiagnosticSeconds)
 {
-    public const string CompatibilityDirectory = @"C:\MSFS2024\Apps and Mods\StreamFlight\Output";
     public static Options Load(string[] args)
     {
         var settingsPath = Path.Combine(AppContext.BaseDirectory, "settings.json");

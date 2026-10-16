@@ -20,7 +20,6 @@ internal sealed partial class FeederForm : Form
     private long nextHeartbeat;
     private string connectionStatus = "Waiting for MSFS 2024…";
     private string? pendingDisconnect;
-    private bool blockedByStreamFlight;
     private bool hasOwnedOutput;
     private string lastStatus = "";
     private bool shuttingDown;
@@ -53,28 +52,12 @@ internal sealed partial class FeederForm : Form
         catch (Exception ex) { MessageBox.Show(this, ex.Message, Text); }
     }
 
-    private bool LegacyWriterRunning()
-    {
-        if (!string.Equals(Path.TrimEndingDirectorySeparator(options.OutputDirectory), Options.CompatibilityDirectory, StringComparison.OrdinalIgnoreCase))
-            return false;
-        var processes = Process.GetProcessesByName("StreamFlight");
-        try { return processes.Length != 0; }
-        finally { foreach (var process in processes) process.Dispose(); }
-    }
-
     private void Tick()
     {
         if (shuttingDown) return;
         if (options.DiagnosticSeconds > 0 && lifetime.Elapsed.TotalSeconds >= options.DiagnosticSeconds)
         {
             Close();
-            return;
-        }
-        blockedByStreamFlight = LegacyWriterRunning();
-        if (blockedByStreamFlight)
-        {
-            Disconnect("Close StreamFlight to let the feeder use the OBS files.");
-            ShowState(connectionStatus);
             return;
         }
         if (pendingDisconnect != null)
@@ -190,7 +173,7 @@ internal sealed partial class FeederForm : Form
         shuttingDown = true;
         timer.Stop();
         Disconnect("Stopped");
-        if (hasOwnedOutput && !LegacyWriterRunning())
+        if (hasOwnedOutput)
         {
             var error = writer.Write(OverlayText.Unavailable);
             if (error != null) Log.Write("Final output write failed: " + error);
