@@ -8,9 +8,9 @@ The embedded public key is `src/Updates/ReleasePublicKey.cs`. Its newly created 
 
 For a future release:
 
-1. Increment `Version` in `Directory.Build.props`. Never silently replace a published version. Move the previous `dist/upload` folder to your release archive before packaging; the script refuses to overwrite an existing ZIP.
+1. Increment `Version` in `Directory.Build.props`. Never silently replace a published version. Packaging refuses the same or an older version before touching existing output.
 2. Run `./package-release.ps1 -SigningKey "$env:LOCALAPPDATA\WSG Stream Feeder\signing\release-key.dpapi"`. Tests run before publishing. The script builds the app and updater, writes and signs `app-files.json`, then packages and signs the release metadata. It performs no network upload.
-3. Run `./tools/verify-release.ps1` to verify both production signatures and package contents. Copy `web/index.html`, `web/WSG-Stream-Feeder.html`, `web/tools.css`, `web/feeder.js`, `web/UPLOAD-INSTRUCTIONS.txt`, and `web/assets/` into `dist/upload`. Keep existing tools' files on the server.
+3. The script verifies both production signatures and package contents, includes the website assets and checksum, then promotes the complete bundle to `dist/upload`. Only after that succeeds, it removes older release/upload folders and intermediate publish folders from `dist`. Normally only `dist/release-<current-version>` and `dist/upload` remain. Older published releases remain on GitHub. Keep existing tools' files on the web server.
 4. Scan the final package and record its exact SHA-256. The release signatures do not replace Authenticode or antivirus testing.
 5. Upload to `https://wesimglide.org/otherdata/tools/`: the ZIP first, assets/pages next, and **WSG-Stream-Feeder.version.json last**. That last file activates the release for installed clients.
 
