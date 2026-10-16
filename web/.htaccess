@@ -1,0 +1,17 @@
+# WSG tools: revalidate mutable pages and assets before reusing cached copies.
+# If this directory already has an .htaccess, merge this block into it.
+<IfModule mod_headers.c>
+    <FilesMatch "^(index\.html|WSG-Stream-Feeder\.html|tools\.css|feeder\.js|wsg-logo\.png|wsg-stream-feeder\.png|glass-cockpit-refresh\.png)$">
+        Header onsuccess unset Cache-Control
+        Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
+        Header onsuccess unset Expires
+        Header always unset Expires
+    </FilesMatch>
+    # Fixed download URLs and release metadata must not serve an old release.
+    <FilesMatch "^WSG-Stream-Feeder\.(version\.json|zip|zip\.sha256)$">
+        Header onsuccess unset Cache-Control
+        Header always set Cache-Control "no-store"
+        Header onsuccess unset Expires
+        Header always unset Expires
+    </FilesMatch>
+</IfModule>

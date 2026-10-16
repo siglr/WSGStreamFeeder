@@ -51,9 +51,7 @@ try {
     & $signer sign $SigningKey $feed
     if ($LASTEXITCODE -ne 0) { throw 'Release signing failed.' }
     & .\tools\verify-release.ps1 -PackageDirectory $package -UploadDirectory $staging
-    foreach ($name in @('index.html','WSG-Stream-Feeder.html','tools.css','feeder.js','UPLOAD-INSTRUCTIONS.txt','assets')) {
-        Copy-Item -LiteralPath (Join-Path 'web' $name) -Destination $staging -Recurse
-    }
+    & .\tools\prepare-web.ps1 -Destination $staging
     [IO.File]::WriteAllText((Join-Path $staging 'WSG-Stream-Feeder.zip.sha256'), (Get-FileHash -LiteralPath $archive).Hash.ToLowerInvariant() + '  WSG-Stream-Feeder.zip' + "`n")
     # Check all absolute move destinations before promoting the verified upload bundle.
     $distRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot 'dist'))
