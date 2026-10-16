@@ -1,19 +1,19 @@
-# WSG Stream Feeder 1.3.7 — local antivirus review
+# WSG Stream Feeder 1.3.8 — local antivirus review
 
-Reviewed 2026-10-16 (America/Toronto) after packaging the NB21 NETTO gauge change. Microsoft Defender reported **no threats** for both the final release directory and ZIP. Both scans completed with exit code 0.
+Reviewed 2026-10-16 (America/Toronto) after packaging the shortened glider heading change. Microsoft Defender reported **no threats** for both the final release directory and ZIP. Both scans completed with exit code 0.
 
 | Evidence | Result |
 | --- | --- |
 | Engine | Microsoft Defender 1.1.26090.9 |
 | Signatures | 1.461.53.0, updated 2026-10-16 00:15 EDT |
 | Protection | Antivirus and real-time protection enabled |
-| ZIP size | 1,093,550 bytes |
-| ZIP SHA-256 | `c514e9db9a58c47376bf59b26a2f76e366c3b58cb16b24fa39d0ced392386e3f` |
+| ZIP size | 1,093,664 bytes |
+| ZIP SHA-256 | `90749ff96415c701ccece73f06baf3b47720b943c43d05b77a5a772d99b6d5d8` |
 | App and updater Authenticode status | NotSigned |
 | Release authenticity | Both RSA signatures and all 15 managed file hashes verified; ZIP entries verified against inventory |
 | Automated checks | 135 offline telemetry/output/identity/window-placement checks, 13 WinForms lifecycle checks and 39 updater checks passed |
 
-Scanned `dist/release-1.3.7` and `dist/upload/WSG-Stream-Feeder.zip` with `MpCmdRun.exe -Scan -ScanType 3 -File <path> -DisableRemediation`. The custom scan reports detections without remediation; it does not turn off real-time protection. Raw console results are retained under `build/defender-release-1.3.7-scan.txt` and `build/defender-zip-1.3.7-scan.txt`. No antivirus settings or exclusions were changed. No sample was submitted to an external scanning website.
+Scanned `dist/release-1.3.8` and `dist/upload/WSG-Stream-Feeder.zip` with `MpCmdRun.exe -Scan -ScanType 3 -File <path> -DisableRemediation`. The custom scan reports detections without remediation; it does not turn off real-time protection. Raw console results are retained under `build/defender-release-1.3.8-scan.txt` and `build/defender-zip-1.3.8-scan.txt`. No antivirus settings or exclusions were changed. No sample was submitted to an external scanning website.
 
 ## Changes made to reduce avoidable suspicion
 

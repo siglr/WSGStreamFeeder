@@ -14,7 +14,7 @@ static class GliderChecks
         Check(Marshal.SizeOf<AircraftIdentity>() == 512 && Marshal.OffsetOf<AircraftIdentity>(nameof(AircraftIdentity.Model)).ToInt32() == 256, "two identity strings match TITLE and ATC MODEL wire layout");
         var identity = new AircraftIdentity { Title = "Jonker JS3 (18m) DIAMONDS", Model = "JS3-18" };
         Check(PanelPresentation.AircraftName(identity.Model, null) == "JS3-18", "livery-specific title is excluded from the uncataloged glider heading");
-        Check(PanelPresentation.AircraftName(identity.Model, "Jonker JS3 (18m)") == "Jonker JS3 (18m)", "catalog model name takes precedence when available");
+        Check(PanelPresentation.AircraftName(identity.Model, "Jonker JS3 Rapture 18m (B21-CalVR)") == "Jonker JS3 Rapture 18m", "catalog name takes precedence and trailing attribution is omitted from the overlay");
         Check(PanelPresentation.AircraftName(" JS3-18 ", " ") == "JS3-18", "blank catalog name falls back to trimmed simulator model");
         Check(PanelPresentation.AircraftName(null, null) == "Your glider", "missing model uses neutral heading rather than a livery title");
         Check(PanelPresentation.AircraftName("TT:ATCCOM.AC_MODEL_EXAMPLE.0.text", null) == "Your glider", "unresolved model localization token is not shown");

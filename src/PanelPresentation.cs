@@ -6,10 +6,10 @@ internal static class PanelPresentation
     // TITLE can contain a paint/livery name. Use only model identities in the heading.
     public static string AircraftName(string? model, string? catalogName)
     {
-        if (!string.IsNullOrWhiteSpace(catalogName)) return catalogName.Trim();
-        var name = model?.Trim();
-        return string.IsNullOrWhiteSpace(name) || name.StartsWith("TT:", StringComparison.OrdinalIgnoreCase)
-            ? "Your glider" : name;
+        var name = !string.IsNullOrWhiteSpace(catalogName) ? catalogName.Trim() : model?.Trim();
+        if (string.IsNullOrWhiteSpace(name) || name.StartsWith("TT:", StringComparison.OrdinalIgnoreCase)) return "Your glider";
+        // Hide the trailing attribution in the overlay; retain the full catalog identity elsewhere.
+        return System.Text.RegularExpressions.Regex.Replace(name, @"\s+\([^()]*\)$", "");
     }
 
     public static IEnumerable<string> Rows(IEnumerable<string> selected, bool? hasFlaps)

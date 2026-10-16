@@ -16,6 +16,8 @@ A small Windows x64 application that reads MSFS 2024 through Microsoft's SimConn
 
 **v1.3.7:** NETTO replaces MC and Vertical air mass, using MSFS `AMBIENT WIND Y` — the same source NB21 Logger writes to the IGC `NET` field. Saved File/Panel selections migrate to NETTO in place, merging duplicates. Select `netto.txt` in any OBS text source previously using `maccready.txt` or `wind_vertical.txt`; existing retired files become `N/A`. The centered gauge uses the same square-root ±5 m/s scale as V/SPD, with green lift, red sink and overflow markers. The numeric reading stays unclamped. No additional SimConnect request is needed; the unused MacCready setting has been removed from the existing one-second sample.
 
+**v1.3.8:** the overlay omits a trailing parenthesized suffix from the glider heading. For example, `Jonker JS3 Rapture 18m (B21-CalVR)` displays as `Jonker JS3 Rapture 18m`. The full aircraft reference and lookup identity are preserved.
+
 [Download the latest release](https://github.com/siglr/WSGStreamFeeder/releases/latest) · [WeSimGlide download page](https://wesimglide.org/otherdata/tools/WSG-Stream-Feeder.html) · [License](LICENSE.md)
 
 **v1.3.3:** Settings includes **Start with the main window minimized**. Enable it and choose **Save settings** to start minimized even after restoring the main window to exit. Off by default, it replaces the main window's last-minimized-state behavior; position, size and maximized placement are still remembered. The capture window continues restoring its own open/closed and minimized state independently. The explicit `--minimized` launch option still takes precedence.
