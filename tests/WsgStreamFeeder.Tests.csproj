@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../src/Telemetry.cs" Link="Telemetry.cs" />
+    <Compile Include="../src/OutputWriter.cs" Link="OutputWriter.cs" />
+  </ItemGroup>
+</Project>

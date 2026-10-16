@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
+    <AssemblyName>WSG Stream Feeder</AssemblyName>
+    <RootNamespace>WsgStreamFeeder</RootNamespace>
+    <Product>WSG Stream Feeder</Product>
+    <Title>WSG Stream Feeder</Title>
+    <DefineConstants Condition="'$(OfficialRelease)' != 'true'">$(DefineConstants);WSG_NO_AUTO_UPDATE</DefineConstants>
+    <ApplicationIcon>../assets/WSGClient.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../assets/WSGClient.ico" LogicalName="WsgStreamFeeder.AppIcon" />
+    <EmbeddedResource Include="../assets/wsg-logo.png" LogicalName="WsgStreamFeeder.Logo" />
+    <Reference Include="Microsoft.FlightSimulator.SimConnect">
+      <HintPath>../lib/Microsoft.FlightSimulator.SimConnect.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Content Include="../lib/SimConnect.dll" Link="SimConnect.dll" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="settings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
