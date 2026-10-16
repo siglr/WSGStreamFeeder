@@ -3,6 +3,15 @@ namespace WsgStreamFeeder;
 // Presentation-only grouping: the two wind exports remain independent.
 internal static class PanelPresentation
 {
+    // TITLE can contain a paint/livery name. Use only model identities in the heading.
+    public static string AircraftName(string? model, string? catalogName)
+    {
+        if (!string.IsNullOrWhiteSpace(catalogName)) return catalogName.Trim();
+        var name = model?.Trim();
+        return string.IsNullOrWhiteSpace(name) || name.StartsWith("TT:", StringComparison.OrdinalIgnoreCase)
+            ? "Your glider" : name;
+    }
+
     public static IEnumerable<string> Rows(IEnumerable<string> selected, bool? hasFlaps)
     {
         var windShown = false;

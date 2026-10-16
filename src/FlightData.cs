@@ -47,6 +47,7 @@ public struct FlightData
 public struct AircraftIdentity
 {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string Title;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string Model;
 }
 
 // Filled by the optional aircraft catalog lookup. Null limits never block live measurements.

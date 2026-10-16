@@ -20,6 +20,7 @@ internal sealed partial class FeederForm
     private CaptureForm? captureWindow;
     private readonly Panel captureSlot = new() { Margin = new Padding(0, 8, 0, 8) };
     private string aircraftTitle = "Your glider";
+    private string aircraftModel = "";
     private AircraftMetadata? aircraftMetadata;
     private bool preview;
     private string? lastPanelSignature;
@@ -230,7 +231,7 @@ internal sealed partial class FeederForm
         panel.Preview = preview;
         panel.Metadata = preview ? new AircraftMetadata("Preview glider", 270, 600, new Dictionary<int, string> { [1] = "−2", [2] = "−1", [3] = "0", [4] = "N", [5] = "+1", [6] = "+2", [7] = "L" }, true, 7) : aircraftMetadata;
         panel.Readings = preview ? Readings.Create(PreviewData, preferences, panel.Metadata) : CurrentReadings;
-        panel.Aircraft = aircraftTitle;
+        panel.Aircraft = aircraftModel;
         panel.FlapCount = panel.Metadata?.FlapCount ?? 0;
         panel.State = model.Latest == null ? "WAITING FOR SIMULATOR" : paused ? "PAUSED" : model.Latest?.Slew != 0 ? "SLEW" : "LIVE • MSFS 2024";
         panel.AccessibleDescription = string.Join("; ", preferences.PanelChannels.Select(id => Channels.All.Single(c => c.Id == id).Name + ": " + panel.Readings[id].Display));

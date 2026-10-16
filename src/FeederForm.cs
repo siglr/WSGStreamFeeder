@@ -154,7 +154,10 @@ internal sealed partial class FeederForm : Form
                 lastContact = Environment.TickCount64;
                 if (data.dwRequestID == (uint)Request.Identity)
                 {
-                    aircraftTitle = ((AircraftIdentity)data.dwData[0]).Title?.Trim() ?? "Your glider";
+                    var identity = (AircraftIdentity)data.dwData[0];
+                    aircraftTitle = identity.Title?.Trim() ?? "Your glider";
+                    aircraftModel = identity.Model?.Trim() ?? "";
+                    lastPanelSignature = null;
                     identityReady = true;
                     return;
                 }
@@ -172,6 +175,7 @@ internal sealed partial class FeederForm : Form
             foreach (var (_, name, unit) in FlightData.Definition) Define(name, unit);
             connection.RegisterDataDefineStruct<FlightData>(Definition.Aircraft);
             connection.AddToDataDefinition(Definition.Identity, "TITLE", null, SIMCONNECT_DATATYPE.STRING256, 0, SimConnect.SIMCONNECT_UNUSED);
+            connection.AddToDataDefinition(Definition.Identity, "ATC MODEL", null, SIMCONNECT_DATATYPE.STRING256, 0, SimConnect.SIMCONNECT_UNUSED);
             connection.RegisterDataDefineStruct<AircraftIdentity>(Definition.Identity);
             connection.SubscribeToSystemEvent(Event.Pause, "Pause_EX1");
             connection.SubscribeToSystemEvent(Event.AircraftLoaded, "AircraftLoaded");

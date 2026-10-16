@@ -11,6 +11,13 @@ static class GliderChecks
         var count = 0;
         void Check(bool condition, string label) { if (!condition) throw new Exception("FAILED: " + label); count++; Console.WriteLine("PASS: " + label); }
         bool Near(double? a, double b) => a.HasValue && Math.Abs(a.Value - b) < .00001;
+        Check(Marshal.SizeOf<AircraftIdentity>() == 512 && Marshal.OffsetOf<AircraftIdentity>(nameof(AircraftIdentity.Model)).ToInt32() == 256, "two identity strings match TITLE and ATC MODEL wire layout");
+        var identity = new AircraftIdentity { Title = "Jonker JS3 (18m) DIAMONDS", Model = "JS3-18" };
+        Check(PanelPresentation.AircraftName(identity.Model, null) == "JS3-18", "livery-specific title is excluded from the uncataloged glider heading");
+        Check(PanelPresentation.AircraftName(identity.Model, "Jonker JS3 (18m)") == "Jonker JS3 (18m)", "catalog model name takes precedence when available");
+        Check(PanelPresentation.AircraftName(" JS3-18 ", " ") == "JS3-18", "blank catalog name falls back to trimmed simulator model");
+        Check(PanelPresentation.AircraftName(null, null) == "Your glider", "missing model uses neutral heading rather than a livery title");
+        Check(PanelPresentation.AircraftName("TT:ATCCOM.AC_MODEL_EXAMPLE.0.text", null) == "Your glider", "unresolved model localization token is not shown");
         Check(Marshal.SizeOf<FlightData>() == 26 * 8 && FlightData.Definition.Length == 26, "26 numeric fields match SimConnect payload size");
         Check(FlightData.Definition.Select((f, i) => Marshal.OffsetOf<FlightData>(f.Field).ToInt32() == i * 8).All(x => x), "every SimConnect field matches its declared wire offset");
         var prefs = new FeederPreferences();

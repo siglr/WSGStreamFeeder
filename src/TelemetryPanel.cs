@@ -46,7 +46,7 @@ internal sealed class TelemetryPanel : Control
         using var small = new Font("Segoe UI", 7, FontStyle.Bold);
         DrawText(g, "WSG", small, Palette.Accent, new RectangleF(10, 5, 32, 15));
         DrawText(g, Preview ? "PREVIEW • PANEL ONLY" : State, small, Preview ? Palette.Focus : Palette.Muted, new RectangleF(45, 5, right - 45, 15), true);
-        DrawText(g, Metadata?.DisplayName ?? Aircraft, titleFont, Palette.Text, new RectangleF(10, 20, right - 10, 23));
+        DrawText(g, PanelPresentation.AircraftName(Aircraft, Metadata?.DisplayName), titleFont, Palette.Text, new RectangleF(10, 20, right - 10, 23));
         g.DrawLine(outline, 10, 47, right, 47);
         var y = 51f;
         foreach (var id in VisibleChannels)

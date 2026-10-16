@@ -27,6 +27,7 @@ internal sealed partial class FeederForm
         referenceGeneration++;
         referenceKey = null; aircraftType = null; identityReady = false; aircraftPathReady = false; referenceWingspan = null;
         aircraftMetadata = null; aircraftTitle = "Your glider";
+        aircraftModel = "";
         referenceBusy = false; nextReferenceAttempt = 0;
         referenceStatus.Text = "Aircraft reference: waiting for aircraft";
         lastPanelSignature = null;
