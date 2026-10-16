@@ -9,10 +9,6 @@ internal sealed partial class FeederForm
     private Palette palette = ThemePreference.IsLight() ? Palette.Day : Palette.Night;
     private readonly Label status = LabelFor("Waiting for MSFS 2024…", 11);
     private readonly Label connectionBadge = LabelFor("●  WAITING", 9, true, "muted");
-    private readonly Label altitudeValue = LabelFor("N/A", 27, true);
-    private readonly Label headingValue = LabelFor("N/A", 27, true);
-    private readonly Label speedValue = LabelFor("N/A", 27, true);
-    private readonly Label verticalSpeedValue = LabelFor("N/A", 27, true);
     private readonly PictureBox logo = new() { SizeMode = PictureBoxSizeMode.Zoom, Dock = DockStyle.Fill };
     private readonly WsgButton darkButton = new() { Text = "Dark", Centered = true };
     private readonly WsgButton lightButton = new() { Text = "Light", Centered = true };
@@ -25,11 +21,13 @@ internal sealed partial class FeederForm
         BackColor = Color.Transparent, Tag = role, Margin = Padding.Empty
     };
 
-    private static TableLayoutPanel Grid(int columns = 1) => new()
+    private static TableLayoutPanel Grid(int columns = 1)
     {
-        ColumnCount = columns, Dock = DockStyle.Fill, Margin = Padding.Empty,
-        Padding = Padding.Empty, BackColor = Color.Transparent
-    };
+        var grid = new TableLayoutPanel { ColumnCount = columns, Dock = DockStyle.Fill,
+            Margin = Padding.Empty, Padding = Padding.Empty, BackColor = Color.Transparent };
+        if (columns == 1) grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        return grid;
+    }
 
     private void InitializeAppearance()
     {
@@ -37,13 +35,13 @@ internal sealed partial class FeederForm
             appIcon = new Icon(stream);
         using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("WsgStreamFeeder.Logo")!)
         using (var original = Image.FromStream(stream)) logo.Image = new Bitmap(original);
-        Text = $"WSG Stream Feeder v{Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}";
+        Text = $"WSG Stream Feeder v{Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}";
         Icon = appIcon;
         Font = new Font("Segoe UI", 10);
         AutoScaleMode = AutoScaleMode.Dpi;
         AutoScaleDimensions = new SizeF(96, 96);
-        ClientSize = new Size(940, 700);
-        MinimumSize = new Size(900, 700);
+        ClientSize = new Size(1120, 920);
+        MinimumSize = new Size(1020, 760);
         StartPosition = FormStartPosition.CenterScreen;
         DoubleBuffered = true;
 
@@ -94,10 +92,10 @@ internal sealed partial class FeederForm
         var main = Grid();
         main.Padding = new Padding(24, 24, 24, 16);
         main.RowCount = 6;
-        main.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));
-        main.RowStyles.Add(new RowStyle(SizeType.Absolute, 94));
+        main.RowStyles.Add(new RowStyle(SizeType.Absolute, 84));
+        main.RowStyles.Add(new RowStyle(SizeType.Absolute, 82));
         main.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        main.RowStyles.Add(new RowStyle(SizeType.Absolute, 92));
+        main.RowStyles.Add(new RowStyle(SizeType.Absolute, 72));
         main.RowStyles.Add(new RowStyle(SizeType.Absolute, 28));
         main.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
         shell.Controls.Add(main, 1, 0);
@@ -117,17 +115,7 @@ internal sealed partial class FeederForm
         statusLayout.Controls.Add(status, 0, 1);
         statusPanel.Controls.Add(statusLayout);
         main.Controls.Add(statusPanel, 0, 1);
-        var metrics = Grid(2);
-        metrics.RowCount = 2;
-        metrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-        metrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-        metrics.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
-        metrics.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
-        metrics.Controls.Add(Metric("ALTITUDE", "feet", "altitude.txt", altitudeValue, new Padding(0, 4, 6, 6)), 0, 0);
-        metrics.Controls.Add(Metric("TRUE HEADING", "degrees", "heading_true.txt", headingValue, new Padding(6, 4, 0, 6)), 1, 0);
-        metrics.Controls.Add(Metric("GROUND SPEED", "knots", "speed.txt", speedValue, new Padding(0, 6, 6, 8)), 0, 1);
-        metrics.Controls.Add(Metric("VERTICAL SPEED", "feet / min", "vspeed.txt", verticalSpeedValue, new Padding(6, 6, 0, 8)), 1, 1);
-        main.Controls.Add(metrics, 0, 2);
+        main.Controls.Add(BuildTelemetryWorkspace(), 0, 2);
         var output = new Surface { Dock = DockStyle.Fill, Padding = new Padding(16, 10, 16, 10), Margin = new Padding(0, 8, 0, 0) };
         var outputLayout = Grid();
         outputLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
@@ -160,20 +148,6 @@ internal sealed partial class FeederForm
         return button;
     }
 
-    private static Surface Metric(string name, string unit, string file, Label value, Padding margin)
-    {
-        var panel = new Surface { Dock = DockStyle.Fill, Padding = new Padding(16, 12, 16, 12), Margin = margin };
-        var layout = Grid();
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 22));
-        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 22));
-        layout.Controls.Add(LabelFor(name, 9, true, "muted"), 0, 0);
-        layout.Controls.Add(value, 0, 1);
-        layout.Controls.Add(LabelFor(unit + "  ·  " + file, 8, false, "muted"), 0, 2);
-        panel.Controls.Add(layout);
-        return panel;
-    }
-
     private void OpenAbout()
     {
         try { Process.Start(new ProcessStartInfo("https://WeSimGlide.org/") { UseShellExecute = true }); }
@@ -197,6 +171,7 @@ internal sealed partial class FeederForm
         darkButton.AccessibleDescription = palette.Dark ? "Selected theme" : "Switch to dark theme";
         lightButton.AccessibleDescription = !palette.Dark ? "Selected theme" : "Switch to light theme";
         ApplyColors(this);
+        ApplyWorkspaceColors();
         ApplyTitleBar();
         ResumeLayout(true);
         Invalidate(true);

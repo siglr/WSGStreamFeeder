@@ -21,3 +21,11 @@ The app currently has **no Authenticode publisher certificate**. Its release sig
 If a vendor flags a release, retain the exact hash and detection name, investigate first, then use that vendor's false-positive review process if the file is confirmed legitimate. Do not recommend disabling protection, adding blanket exclusions, disguising behavior, or changing the bytes merely to evade a detection.
 
 Local scan results belong to the exact release hash and scanning engine/signature version. A local clean result is not a universal guarantee and does not predict SmartScreen reputation. No release is uploaded to an external scanning service without an explicit request.
+
+## Optional aircraft reference lookup
+
+Version 1.3 additionally reads `https://wesimglide.org/api/GetGliderReference.php` in development and official builds. It sends only the simulator aircraft folder identity (or TITLE fallback), measured wingspan and inferred competition class, URL-encoded within bounded parameters. It does not send file paths, config contents, positions or pilot identities. This request uses no cookies, credentials or authentication headers, does not follow redirects, accepts at most 64 KiB, and limits header/body waits. Unknown/partial metadata and network failures leave live telemetry functional.
+
+One successful result is retained for the current aircraft/variant; there is no successful-lookup polling during flight. The short in-memory reconnect cache honors the endpoint TTL (matched at most 300 seconds, unknown at most 60 seconds); HTTP errors retry independently after five minutes. Old aircraft metadata is cleared on identity changes and out-of-order responses are ignored. Reference data is never executed and never supplies an executable, script or arbitrary file path.
+
+The sample preview is only graphical. Text exports always use actual received telemetry or N/A. Disabled known telemetry files are set to N/A rather than removed, and unrelated filenames are untouched. Settings are saved atomically under LocalAppData. The app still has no system-tray hiding behavior, and all windows use the normal Windows taskbar.

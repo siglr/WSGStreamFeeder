@@ -10,10 +10,10 @@ public sealed class OutputWriter(string directory)
 
     // Retry failed writes on the next tick. Never cache a failed write as successful.
     // Replace a complete file so OBS cannot read a partially written number.
-    public string? Write(OverlayText values)
+    public string? Write(IEnumerable<KeyValuePair<string, string>> values)
     {
         var errors = new List<string>();
-        foreach (var (name, content) in values.Files())
+        foreach (var (name, content) in values)
         {
             var path = Path.Combine(DirectoryPath, name);
             if (written.TryGetValue(name, out var previous) && previous == content && File.Exists(path))

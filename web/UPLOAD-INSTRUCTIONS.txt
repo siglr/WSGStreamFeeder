@@ -1,4 +1,4 @@
-WSG Stream Feeder 1.2.2 — upload into /otherdata/tools/ on WeSimGlide.org
+WSG Stream Feeder 1.3.0 — upload into /otherdata/tools/ on WeSimGlide.org
 
 1. Upload WSG-Stream-Feeder.zip.
 2. Upload index.html, WSG-Stream-Feeder.html, tools.css, feeder.js and the assets folder.
@@ -10,8 +10,9 @@ version JSON and other assets. The new index.html links to that existing page
 and to WSG-Stream-Feeder.html, with a screenshot and description for each.
 
 This instruction file does not need uploading. Nothing has been published automatically.
-The existing installed v1.2.2 feeder is ready; until the files are uploaded,
-its update check can report that the feed is unavailable.
+GitHub publishing does not activate the website update feed. Upload the ZIP and
+website assets first, then the signed version JSON last.
+Upgrading from v1.2: repoint OBS altitude.txt to altitude_asl.txt.
 
 Do not upload signing keys, build tools, source folders, settings.json or Output.
 Keep a protected Windows profile/system backup for the DPAPI release key.
