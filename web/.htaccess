@@ -1,6 +1,12 @@
 # WSG tools: revalidate mutable pages and assets before reusing cached copies.
 # If this directory already has an .htaccess, merge this block into it.
 <IfModule mod_headers.c>
+    # Preserve the hosting folder's existing versions.json CORS policy.
+    <Files "versions.json">
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    </Files>
+
     <FilesMatch "^(index\.html|WSG-Stream-Feeder\.html|tools\.css|feeder\.js|wsg-logo\.png|wsg-stream-feeder\.png|glass-cockpit-refresh\.png)$">
         Header onsuccess unset Cache-Control
         Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
