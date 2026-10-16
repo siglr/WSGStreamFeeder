@@ -5,6 +5,8 @@ try {
     if (-not $SkipTests) {
         dotnet run --project tests/WsgStreamFeeder.Tests.csproj -c $Configuration
         if ($LASTEXITCODE -ne 0) { throw 'Compatibility checks failed.' }
+        dotnet run --project window-tests/WsgStreamFeeder.WindowTests.csproj -c $Configuration
+        if ($LASTEXITCODE -ne 0) { throw 'Window lifecycle checks failed.' }
         dotnet publish update-tests/WsgStreamFeeder.UpdateTests.csproj -c $Configuration -o build/update-tests
         if ($LASTEXITCODE -ne 0) { throw 'Updater test build failed.' }
         & './build/update-tests/WsgStreamFeeder.UpdateTests.exe'

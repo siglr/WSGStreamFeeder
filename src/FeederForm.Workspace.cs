@@ -164,10 +164,10 @@ internal sealed partial class FeederForm
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         { settingsMessage.Text = "Could not save: " + ex.Message; }
     }
-    private void OpenCaptureWindow()
+    private void OpenCaptureWindow(bool restoreState = false)
     {
         if (captureWindow is { IsDisposed: false }) { captureWindow.WindowState = FormWindowState.Normal; captureWindow.Activate(); return; }
-        captureWindow = new CaptureForm(capturePanel) { Icon = appIcon };
+        captureWindow = new CaptureForm(capturePanel, () => shuttingDown, restoreState) { Icon = appIcon };
         captureWindow.FormClosed += (_, _) =>
         {
             captureWindow = null;

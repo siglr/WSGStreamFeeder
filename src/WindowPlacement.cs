@@ -5,6 +5,9 @@ namespace WsgStreamFeeder;
 
 internal sealed record WindowPlacement(int X, int Y, int Width, int Height, bool Maximized)
 {
+    public bool IsOpen { get; init; }
+    public bool Minimized { get; init; }
+
     [System.Text.Json.Serialization.JsonIgnore]
     public bool IsValid => Width is > 0 and <= 100000 && Height is > 0 and <= 100000
         && X is >= -1000000 and <= 1000000 && Y is >= -1000000 and <= 1000000;

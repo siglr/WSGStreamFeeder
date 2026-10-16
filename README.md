@@ -6,6 +6,8 @@ A small Windows x64 application that reads MSFS 2024 through Microsoft's SimConn
 
 **v1.3.1:** the main window remembers its position, size and maximized state. The capture window separately remembers position and width; its height still follows the selected rows. Placement is saved after moving/resizing and on close in `%LOCALAPPDATA%\WSG Stream Feeder\main-window.json` and `capture-window.json`. Closing while minimized preserves the normal bounds. Windows return to a visible screen if a saved monitor is unavailable.
 
+**v1.3.2:** the capture window automatically reopens if it was open at shutdown, restoring its position, width and minimized state. Closing the capture window yourself keeps it closed on the next launch. Opening it manually always restores it visibly. Height continues to fit the selected rows.
+
 [Download the latest release](https://github.com/siglr/WSGStreamFeeder/releases/latest) · [WeSimGlide download page](https://wesimglide.org/otherdata/tools/WSG-Stream-Feeder.html) · [License](LICENSE.md)
 
 ![WSG Stream Feeder in Dark mode](web/assets/wsg-stream-feeder.png)

@@ -39,6 +39,8 @@ internal sealed partial class FeederForm : Form
         timer.Tick += (_, _) => Tick();
         Shown += (_, _) =>
         {
+            if (WindowPlacementBinding.Load("capture-window.json")?.IsOpen == true)
+                OpenCaptureWindow(restoreState: true);
             Log.Write("Started. Output: " + options.OutputDirectory);
             Tick();
             timer.Start();

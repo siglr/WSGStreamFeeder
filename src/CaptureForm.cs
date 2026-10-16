@@ -5,7 +5,7 @@ internal sealed class CaptureForm : Form
     private readonly TelemetryPanel panel;
     private bool fitting;
 
-    public CaptureForm(TelemetryPanel panel)
+    public CaptureForm(TelemetryPanel panel, Func<bool> appIsClosing, bool restoreState = false)
     {
         this.panel = panel;
         Text = "WSG Stream Feeder — Telemetry";
@@ -17,14 +17,16 @@ internal sealed class CaptureForm : Form
         Controls.Add(panel);
         ClientSize = panel.ContentSize;
         FitContent();
-        WindowPlacementBinding.Attach(this, "capture-window.json", fitContent: FitContent);
+        WindowPlacementBinding.Attach(this, "capture-window.json", fitContent: FitContent,
+            appIsClosing: appIsClosing, restoreMinimized: restoreState);
+        Resize += (_, _) => { if (WindowState == FormWindowState.Normal) FitContent(); };
     }
 
     // Height follows rows/DPI/settings, never the user's resize gesture.
     // Preserve the chosen width when a new telemetry sample arrives.
     public void FitContent()
     {
-        if (fitting || IsDisposed) return;
+        if (fitting || IsDisposed || WindowState == FormWindowState.Minimized) return;
         fitting = true;
         try
         {

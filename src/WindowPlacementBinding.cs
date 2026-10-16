@@ -4,13 +4,21 @@ namespace WsgStreamFeeder;
 
 internal static class WindowPlacementBinding
 {
-    public static void Attach(Form form, string fileName, bool startMinimized = false, Action? fitContent = null)
+    public static WindowPlacement? Load(string fileName)
     {
         var path = Path.Combine(Path.GetDirectoryName(Log.FilePath)!, fileName);
-        WindowPlacement? lastSaved = null;
-        try { lastSaved = WindowPlacement.Load(path); }
+        try { return WindowPlacement.Load(path); }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
         { Log.Write("Could not restore window placement: " + ex.Message); }
+        return null;
+    }
+
+    public static void Attach(Form form, string fileName, bool startMinimized = false, Action? fitContent = null,
+        Func<bool>? appIsClosing = null, bool restoreMinimized = false)
+    {
+        var path = Path.Combine(Path.GetDirectoryName(Log.FilePath)!, fileName);
+        var lastSaved = Load(fileName);
+        var trackOpen = appIsClosing != null;
 
         var ready = false;
         var maximized = lastSaved?.Maximized == true && form.MaximizeBox;
@@ -26,7 +34,8 @@ internal static class WindowPlacementBinding
                 fitContent?.Invoke();
             }
             if (maximized) form.WindowState = FormWindowState.Maximized;
-            if (startMinimized) form.WindowState = FormWindowState.Minimized;
+            if (startMinimized || (restoreMinimized && lastSaved?.Minimized == true))
+                form.WindowState = FormWindowState.Minimized;
             ready = true;
         };
         form.Resize += (_, _) =>
@@ -34,18 +43,28 @@ internal static class WindowPlacementBinding
             if (ready && form.WindowState != FormWindowState.Minimized)
                 maximized = form.WindowState == FormWindowState.Maximized;
         };
-        void Save()
+        void Save(bool isOpen)
         {
             if (!ready) return;
             var bounds = form.WindowState == FormWindowState.Normal ? form.Bounds : form.RestoreBounds;
-            var placement = new WindowPlacement(bounds.X, bounds.Y, bounds.Width, bounds.Height, maximized);
+            var placement = new WindowPlacement(bounds.X, bounds.Y, bounds.Width, bounds.Height, maximized)
+            {
+                IsOpen = trackOpen && isOpen,
+                Minimized = form.WindowState == FormWindowState.Minimized
+            };
             if (!placement.IsValid || placement == lastSaved) return;
             try { placement.Save(path); lastSaved = placement; }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             { Log.Write("Could not save window placement: " + ex.Message); }
         }
         // No disk writes in telemetry ticks or while the user drags the window.
-        form.ResizeEnd += (_, _) => Save();
-        form.FormClosing += (_, e) => { if (!e.Cancel) Save(); };
+        form.Shown += (_, _) => { if (trackOpen) Save(true); };
+        form.ResizeEnd += (_, _) => Save(true);
+        form.FormClosing += (_, e) =>
+        {
+            if (!e.Cancel)
+                Save(appIsClosing?.Invoke() == true || e.CloseReason is CloseReason.ApplicationExitCall
+                    or CloseReason.WindowsShutDown or CloseReason.FormOwnerClosing);
+        };
     }
 }
