@@ -10,7 +10,8 @@ internal sealed partial class FeederForm
     private readonly DataGridView channelGrid = new();
     private readonly Dictionary<string, ComboBox> unitSelectors = new();
     private readonly CheckBox unitsInFiles = new() { Text = "Units in text files", AutoSize = true };
-    private readonly CheckBox startMainMinimized = new() { Text = "Start with the main window minimized", AutoSize = true, MaximumSize = new Size(220, 0) };
+    private readonly CheckBox startMainMinimized = new() { Text = "Start with the main window minimized", AutoSize = true,
+        Anchor = AnchorStyles.Left, Margin = new Padding(3, 8, 3, 8) };
     private readonly CheckBox previewToggle = new() { Text = "Preview with sample data (panel only)", AutoSize = true, Dock = DockStyle.Fill };
     private readonly NumericUpDown panelScale = new() { Minimum = 75, Maximum = 175, Increment = 25, Value = 100, Dock = DockStyle.Fill };
     private readonly Label settingsMessage = LabelFor("Selections and units apply when saved.", 9, false, "muted");
@@ -76,6 +77,7 @@ internal sealed partial class FeederForm
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 36));
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
+        layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
         var heading = LabelFor("Choose values for files, the panel, or both. Hover a name for details.", 9, false, "muted");
         layout.Controls.Add(heading, 0, 0); layout.SetColumnSpan(heading, 2);
@@ -110,8 +112,6 @@ internal sealed partial class FeederForm
         units.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
         unitsInFiles.MaximumSize = new Size(220, 0);
         units.Controls.Add(unitsInFiles, 0, row); units.SetColumnSpan(unitsInFiles, 2); row++;
-        units.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));
-        units.Controls.Add(startMainMinimized, 0, row); units.SetColumnSpan(startMainMinimized, 2); row++;
         var note = LabelFor("Units apply to files and panel. Missing values remain N/A. Aircraft limits appear when catalog data is available.", 9, false, "muted");
         units.RowStyles.Add(new RowStyle(SizeType.Absolute, 105)); units.Controls.Add(note, 0, row); units.SetColumnSpan(note, 2);
         layout.Controls.Add(units, 1, 1);
@@ -121,8 +121,9 @@ internal sealed partial class FeederForm
         order.Controls.Add(ActionButton("Move down", (_, _) => MoveChannel(1)), 1, 0);
         layout.Controls.Add(order, 0, 2);
         layout.Controls.Add(ActionButton("Restore defaults", (_, _) => PopulateSettings(new())), 1, 2);
-        layout.Controls.Add(settingsMessage, 0, 3);
-        layout.Controls.Add(ActionButton("Save settings", (_, _) => SavePreferences(), true), 1, 3);
+        layout.Controls.Add(startMainMinimized, 0, 3); layout.SetColumnSpan(startMainMinimized, 2);
+        layout.Controls.Add(settingsMessage, 0, 4);
+        layout.Controls.Add(ActionButton("Save settings", (_, _) => SavePreferences(), true), 1, 4);
         settingsPage.Controls.Add(layout);
         PopulateSettings(preferences);
     }

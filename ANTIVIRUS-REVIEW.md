@@ -1,19 +1,19 @@
-# WSG Stream Feeder 1.3.3 — local antivirus review
+# WSG Stream Feeder 1.3.4 — local antivirus review
 
-Reviewed 2026-10-16 (America/Toronto) after packaging the explicit main-window startup preference release. Microsoft Defender reported **no threats** for both the final release directory and ZIP. Both scans completed with exit code 0.
+Reviewed 2026-10-16 (America/Toronto) after packaging the settings layout fix. Microsoft Defender reported **no threats** for both the final release directory and ZIP. Both scans completed with exit code 0.
 
 | Evidence | Result |
 | --- | --- |
 | Engine | Microsoft Defender 1.1.26090.9 |
 | Signatures | 1.461.53.0, updated 2026-10-16 00:15 EDT |
 | Protection | Antivirus and real-time protection enabled |
-| ZIP size | 1,092,524 bytes |
-| ZIP SHA-256 | `2b71d8e1d4417a79688f5ad5bae4717334806365a36b5c9b575c09d97d6109c0` |
+| ZIP size | 1,092,596 bytes |
+| ZIP SHA-256 | `dbc751c77187a63e0a523642fbe7f9efdcb0211926d37858f66e494a9569bf14` |
 | App and updater Authenticode status | NotSigned |
 | Release authenticity | Both RSA signatures and all 15 managed file hashes verified; ZIP entries verified against inventory |
 | Automated checks | 106 offline telemetry/output/window-placement checks, 7 production-endpoint checks, 13 WinForms lifecycle checks and 39 updater checks passed |
 
-Scanned `dist/release-1.3.3` and `dist/upload/WSG-Stream-Feeder.zip` with `MpCmdRun.exe -Scan -ScanType 3 -File <path> -DisableRemediation`. The custom scan reports detections without remediation; it does not turn off real-time protection. Raw console results are retained under `build/defender-release-1.3.3-scan.txt` and `build/defender-zip-1.3.3-scan.txt`. No antivirus settings or exclusions were changed. No sample was submitted to an external scanning website.
+Scanned `dist/release-1.3.4` and `dist/upload/WSG-Stream-Feeder.zip` with `MpCmdRun.exe -Scan -ScanType 3 -File <path> -DisableRemediation`. The custom scan reports detections without remediation; it does not turn off real-time protection. Raw console results are retained under `build/defender-release-1.3.4-scan.txt` and `build/defender-zip-1.3.4-scan.txt`. No antivirus settings or exclusions were changed. No sample was submitted to an external scanning website.
 
 ## Changes made to reduce avoidable suspicion
 
