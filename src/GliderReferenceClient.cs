@@ -15,15 +15,25 @@ public sealed class GliderReferenceClient : IDisposable
         http = new HttpClient(handler ?? new HttpClientHandler { AllowAutoRedirect = false, UseCookies = false }) { Timeout = TimeSpan.FromSeconds(5) };
         http.DefaultRequestHeaders.Accept.ParseAdd("application/json");
     }
+    public static Uri BuildAircraftUri(string? folderType, string title, double? wingspan, bool? flapped)
+    {
+        if (string.IsNullOrWhiteSpace(folderType)) return BuildUri(title, wingspan, flapped);
+        // NB21's IGC glider type appends the rounded wingspan to the aircraft identity.
+        // Keep that convention for all folders (e.g. BC_JS3_18m), without aircraft-specific aliases.
+        var type = folderType.Trim();
+        if (ValidWingspan(wingspan)) type += "_" + wingspan!.Value.ToString("0", CultureInfo.InvariantCulture) + "m";
+        return BuildUri(type, wingspan, flapped);
+    }
+    private static bool ValidWingspan(double? wingspan) => wingspan is > 0 and <= 100 && double.IsFinite(wingspan.Value);
     public static Uri BuildUri(string type, double? wingspan, bool? flapped)
     {
         type = type.Trim();
         if (string.IsNullOrEmpty(type) || Encoding.UTF8.GetByteCount(type) > 256 || type.Any(c => c < 32 || c == 127))
             throw new ArgumentException("Invalid aircraft identity.");
         var query = "type=" + Uri.EscapeDataString(type);
-        if (wingspan is > 0 and <= 100 && double.IsFinite(wingspan.Value))
+        if (ValidWingspan(wingspan))
         {
-            query += "&wingMeters=" + wingspan.Value.ToString("0.###", CultureInfo.InvariantCulture);
+            query += "&wingMeters=" + wingspan!.Value.ToString("0.###", CultureInfo.InvariantCulture);
             if (flapped.HasValue)
                 query += "&competitionClass=" + Uri.EscapeDataString(Math.Round(wingspan.Value).ToString("0", CultureInfo.InvariantCulture) + (flapped.Value ? "m flapped" : "m no flaps"));
         }

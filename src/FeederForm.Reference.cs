@@ -38,7 +38,7 @@ internal sealed partial class FeederForm
         if (double.IsFinite(sample.Wingspan) && sample.Wingspan > 0 &&
             (!referenceWingspan.HasValue || Math.Abs(sample.Wingspan - referenceWingspan.Value) > .1)) referenceWingspan = sample.Wingspan;
         Uri uri;
-        try { uri = GliderReferenceClient.BuildUri(aircraftType ?? aircraftTitle, referenceWingspan, sample.FlapCount > 1); }
+        try { uri = GliderReferenceClient.BuildAircraftUri(aircraftType, aircraftTitle, referenceWingspan, sample.FlapCount > 1); }
         catch (ArgumentException) { referenceStatus.Text = "Aircraft reference unavailable — live values remain available"; return; }
         if (referenceKey != uri.AbsoluteUri)
         {
@@ -60,6 +60,7 @@ internal sealed partial class FeederForm
             var result = await referenceClient.GetAsync(uri, referenceCancellation.Token);
             if (shuttingDown || generation != referenceGeneration) return;
             aircraftMetadata = result.Metadata;
+            Log.Write("Aircraft reference lookup " + uri.Query + ": " + (result.Metadata?.GliderKey ?? "unknown"));
             // One successful lookup per aircraft/variant, not a periodic network poll.
             nextReferenceAttempt = long.MaxValue;
             referenceStatus.Text = result.Metadata == null ? "Aircraft not cataloged — live values remain available" : "Aircraft reference: " + result.Metadata.DisplayName;
@@ -71,7 +72,7 @@ internal sealed partial class FeederForm
             if (shuttingDown || generation != referenceGeneration) return;
             referenceStatus.Text = "Aircraft reference unavailable — live values remain available";
             nextReferenceAttempt = Environment.TickCount64 + 300000;
-            Log.Write("Aircraft reference lookup: " + ex.Message);
+            Log.Write("Aircraft reference lookup " + uri.Query + ": " + ex.Message);
         }
         finally { if (generation == referenceGeneration) referenceBusy = false; }
     }

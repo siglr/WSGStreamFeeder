@@ -1,19 +1,19 @@
-# WSG Stream Feeder 1.3.5 — local antivirus review
+# WSG Stream Feeder 1.3.6 — local antivirus review
 
-Reviewed 2026-10-16 (America/Toronto) after packaging the livery-free glider identification change. Microsoft Defender reported **no threats** for both the final release directory and ZIP. Both scans completed with exit code 0.
+Reviewed 2026-10-16 (America/Toronto) after packaging the NB21-compatible aircraft reference identification fix. Microsoft Defender reported **no threats** for both the final release directory and ZIP. Both scans completed with exit code 0.
 
 | Evidence | Result |
 | --- | --- |
 | Engine | Microsoft Defender 1.1.26090.9 |
 | Signatures | 1.461.53.0, updated 2026-10-16 00:15 EDT |
 | Protection | Antivirus and real-time protection enabled |
-| ZIP size | 1,092,904 bytes |
-| ZIP SHA-256 | `df337a5e0548828eb3e55e649e518939413254af7f68ec14e0ebaad0544ed286` |
+| ZIP size | 1,093,276 bytes |
+| ZIP SHA-256 | `c2b0b696db5c7e74baab0999bd7555db526175979ef0f728bae59ed9b77d29f5` |
 | App and updater Authenticode status | NotSigned |
 | Release authenticity | Both RSA signatures and all 15 managed file hashes verified; ZIP entries verified against inventory |
-| Automated checks | 112 offline telemetry/output/identity/window-placement checks, 7 production-endpoint checks, 13 WinForms lifecycle checks and 39 updater checks passed |
+| Automated checks | 122 offline telemetry/output/identity/window-placement checks, 13 production-endpoint checks, 13 WinForms lifecycle checks and 39 updater checks passed |
 
-Scanned `dist/release-1.3.5` and `dist/upload/WSG-Stream-Feeder.zip` with `MpCmdRun.exe -Scan -ScanType 3 -File <path> -DisableRemediation`. The custom scan reports detections without remediation; it does not turn off real-time protection. Raw console results are retained under `build/defender-release-1.3.5-scan.txt` and `build/defender-zip-1.3.5-scan.txt`. No antivirus settings or exclusions were changed. No sample was submitted to an external scanning website.
+Scanned `dist/release-1.3.6` and `dist/upload/WSG-Stream-Feeder.zip` with `MpCmdRun.exe -Scan -ScanType 3 -File <path> -DisableRemediation`. The custom scan reports detections without remediation; it does not turn off real-time protection. Raw console results are retained under `build/defender-release-1.3.6-scan.txt` and `build/defender-zip-1.3.6-scan.txt`. No antivirus settings or exclusions were changed. No sample was submitted to an external scanning website.
 
 ## Changes made to reduce avoidable suspicion
 

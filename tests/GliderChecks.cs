@@ -128,6 +128,13 @@ static class GliderChecks
         Check(GliderReferenceClient.Parse(Encoding.UTF8.GetBytes(unknown)).Metadata == null, "unknown response yields no stale metadata");
         var uri = GliderReferenceClient.BuildUri("glider & type", 18, true);
         Check(uri.Query.Contains("type=glider%20%26%20type") && uri.Query.Contains("competitionClass=18m%20flapped"), "aircraft query safely encodes identity and variant");
+        var js3Uri = GliderReferenceClient.BuildAircraftUri("BC_JS3", identity.Title, 18, true);
+        Check(js3Uri.Query == "?type=BC_JS3_18m&wingMeters=18&competitionClass=18m%20flapped", "installed JS3 folder matches NB21 IGC identity without livery title");
+        Check(GliderReferenceClient.BuildAircraftUri(" gotfriends_schleicher_as_33_me ", "AS33 livery", 14.999, true).Query.Contains("type=gotfriends_schleicher_as_33_me_15m"), "NB21 wingspan suffix applies generically and rounds fractional span");
+        Check(GliderReferenceClient.BuildAircraftUri("UNKNOWN_GLIDER", "JS3 livery", 18, true).Query.Contains("type=UNKNOWN_GLIDER_18m"), "unknown folder is preserved instead of guessing from livery title");
+        Check(GliderReferenceClient.BuildAircraftUri(null, "fallback title", 18, true) == GliderReferenceClient.BuildUri("fallback title", 18, true), "missing folder retains existing title fallback");
+        foreach (var span in new double?[] { null, 0, -1, double.NaN, double.PositiveInfinity, 101 })
+            Check(GliderReferenceClient.BuildAircraftUri("BC_JS3", identity.Title, span, true).Query == "?type=BC_JS3", "unavailable or invalid wingspan does not invent an IGC suffix: " + span);
         var handler = new FixtureHandler(match);
         using (var client = new GliderReferenceClient(handler))
         {
@@ -159,6 +166,19 @@ static class GliderChecks
                 var reference = await live.GetAsync(GliderReferenceClient.BuildUri(type, wing, flapped), default);
                 Check(reference.Metadata?.GliderKey == expected && reference.Metadata?.MaxWeightKg == weight && reference.Metadata?.VneTasKph == vne, "production API / actual client: " + type + " " + wing);
                 if (type == "LS4-MD") Check(reference.Metadata?.HasFlaps == false && reference.Metadata.FlapCount == null, "production unflapped metadata is respected");
+            }
+            foreach (var (folder, wing, flapped, expected, weight, vne) in new (string, double, bool, string?, double?, double?)[]
+            {
+                ("BC_JS3", 18, true, "JS3-18-BC", 600, 292),
+                ("gotfriends_schleicher_as_33_me", 15, true, "AS33-15-GF", 550, 282),
+                ("gotfriends_schleicher_as_33_me", 18, true, "AS33-18-GF", 600, 282),
+                ("LS4-MD", 15, false, "LS4-MD", 525, 282),
+                ("WSG_UNKNOWN_REFERENCE_TEST_20261016", 18, true, null, null, null)
+            })
+            {
+                var reference = await live.GetAsync(GliderReferenceClient.BuildAircraftUri(folder, "Unused livery title", wing, flapped), default);
+                Check(reference.Metadata?.GliderKey == expected && reference.Metadata?.MaxWeightKg == weight && reference.Metadata?.VneTasKph == vne, "production API / NB21-style folder identity: " + folder + " " + wing);
+                if (folder == "BC_JS3") Check(reference.Metadata is { HasFlaps: true, FlapCount: 6 } && reference.Metadata.FlapLabels?[3] == "3", "installed B21-CalVR JS3 receives catalog flap detents and labels");
             }
         }
         var watch = Stopwatch.StartNew();
