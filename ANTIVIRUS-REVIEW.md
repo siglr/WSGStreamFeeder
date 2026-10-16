@@ -7,11 +7,11 @@ Reviewed 2026-10-16 (America/Toronto) after packaging the capture-window session
 | Engine | Microsoft Defender 1.1.26090.9 |
 | Signatures | 1.461.53.0, updated 2026-10-16 00:15 EDT |
 | Protection | Antivirus and real-time protection enabled |
-| ZIP size | 1,092,264 bytes |
-| ZIP SHA-256 | `b7b5f413d82d8cbbe1e2d207a0f2c0d588c8bc4d5dba67541d3717e647c94ea0` |
+| ZIP size | 1,092,285 bytes |
+| ZIP SHA-256 | `147813e7e13f89ba5a3cc06ba6d481a25b4bd961be69901f97e3435b46d39e36` |
 | App and updater Authenticode status | NotSigned |
 | Release authenticity | Both RSA signatures and all 15 managed file hashes verified; ZIP entries verified against inventory |
-| Automated checks | 103 offline telemetry/output/window-placement checks, 7 production-endpoint checks, 9 WinForms lifecycle checks and 39 updater checks passed |
+| Automated checks | 103 offline telemetry/output/window-placement checks, 7 production-endpoint checks, 12 WinForms lifecycle checks and 39 updater checks passed |
 
 Scanned `dist/release-1.3.2` and `dist/upload/WSG-Stream-Feeder.zip` with `MpCmdRun.exe -Scan -ScanType 3 -File <path> -DisableRemediation`. The custom scan reports detections without remediation; it does not turn off real-time protection. Raw console results are retained under `build/defender-release-1.3.2-scan.txt` and `build/defender-zip-1.3.2-scan.txt`. No antivirus settings or exclusions were changed. No sample was submitted to an external scanning website.
 

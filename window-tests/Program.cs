@@ -65,6 +65,27 @@ internal static class Program
                 Check(Saved().IsOpen, "corrupt saved state recovers and can be saved again");
                 recovered.Close();
             }
+            var mainPath = Path.Combine(Path.GetDirectoryName(Log.FilePath)!, "main.json");
+            using (var main = new TestForm())
+            {
+                WindowPlacementBinding.Attach(main, "main.json", restoreMinimized: true);
+                main.Show();
+                Application.DoEvents();
+                main.WindowState = FormWindowState.Minimized;
+                Application.DoEvents();
+                main.Close();
+            }
+            Check(WindowPlacement.Load(mainPath)?.Minimized == true, "main window saves minimized state on shutdown");
+            using (var main = new TestForm())
+            {
+                WindowPlacementBinding.Attach(main, "main.json", restoreMinimized: true);
+                main.Show();
+                Application.DoEvents();
+                Check(main.WindowState == FormWindowState.Minimized, "main window starts minimized when last closed minimized");
+                main.WindowState = FormWindowState.Normal;
+                main.Close();
+            }
+            Check(WindowPlacement.Load(mainPath)?.Minimized == false, "restoring main window clears the saved minimized state");
             Console.WriteLine($"All {count} window lifecycle checks passed.");
         }
         finally
