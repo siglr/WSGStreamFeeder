@@ -68,7 +68,7 @@ internal static class Program
             var mainPath = Path.Combine(Path.GetDirectoryName(Log.FilePath)!, "main.json");
             using (var main = new TestForm())
             {
-                WindowPlacementBinding.Attach(main, "main.json", restoreMinimized: true);
+                WindowPlacementBinding.Attach(main, "main.json", startMinimized: true);
                 main.Show();
                 Application.DoEvents();
                 main.WindowState = FormWindowState.Minimized;
@@ -78,14 +78,22 @@ internal static class Program
             Check(WindowPlacement.Load(mainPath)?.Minimized == true, "main window saves minimized state on shutdown");
             using (var main = new TestForm())
             {
-                WindowPlacementBinding.Attach(main, "main.json", restoreMinimized: true);
+                WindowPlacementBinding.Attach(main, "main.json", startMinimized: false);
                 main.Show();
                 Application.DoEvents();
-                Check(main.WindowState == FormWindowState.Minimized, "main window starts minimized when last closed minimized");
+                Check(main.WindowState == FormWindowState.Normal, "startup option off ignores last minimized state");
                 main.WindowState = FormWindowState.Normal;
                 main.Close();
             }
             Check(WindowPlacement.Load(mainPath)?.Minimized == false, "restoring main window clears the saved minimized state");
+            using (var main = new TestForm())
+            {
+                WindowPlacementBinding.Attach(main, "main.json", startMinimized: true);
+                main.Show();
+                Application.DoEvents();
+                Check(main.WindowState == FormWindowState.Minimized, "startup option on minimizes after closing main in normal state");
+                main.Close();
+            }
             Console.WriteLine($"All {count} window lifecycle checks passed.");
         }
         finally

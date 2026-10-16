@@ -101,6 +101,11 @@ static class GliderChecks
             prefs.PanelChannels = ["weight", "tas"]; prefs.Save(path);
             var loaded = FeederPreferences.Load(path, out var error);
             Check(error == null && loaded.PanelChannels.SequenceEqual(prefs.PanelChannels) && loaded.Altitude == "m" && loaded.TextChannels.SequenceEqual(prefs.TextChannels), "settings roundtrip preserves independent selections, order and units");
+            Check(!loaded.StartMainMinimized, "startup minimization defaults to off");
+            prefs.StartMainMinimized = true; prefs.Save(path);
+            Check(FeederPreferences.Load(path, out error).StartMainMinimized && error == null, "startup minimization preference survives saving and reopening");
+            prefs.StartMainMinimized = false; prefs.Save(path);
+            Check(!FeederPreferences.Load(path, out error).StartMainMinimized, "startup minimization can be disabled again");
             File.WriteAllText(path, "{broken");
             Check(FeederPreferences.Load(path, out error).TextChannels.Length == 4 && error != null, "corrupt settings recover to defaults with visible error");
             File.WriteAllText(path, "{\"Altitude\":\"invalid\",\"PanelChannels\":[\"tas\",\"tas\",\"../bad\"],\"TextChannels\":[]}");

@@ -13,6 +13,7 @@ public sealed class FeederPreferences
     public string Pressure { get; set; } = "hPa";
     public string Length { get; set; } = "m";
     public bool IncludeUnits { get; set; }
+    public bool StartMainMinimized { get; set; }
     public int PanelScale { get; set; } = 100;
     public string[] TextChannels { get; set; } = [.. Channels.DefaultFiles];
     public string[] PanelChannels { get; set; } = [.. Channels.DefaultPanel];

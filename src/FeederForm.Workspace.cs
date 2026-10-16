@@ -10,6 +10,7 @@ internal sealed partial class FeederForm
     private readonly DataGridView channelGrid = new();
     private readonly Dictionary<string, ComboBox> unitSelectors = new();
     private readonly CheckBox unitsInFiles = new() { Text = "Units in text files", AutoSize = true };
+    private readonly CheckBox startMainMinimized = new() { Text = "Start with the main window minimized", AutoSize = true, MaximumSize = new Size(220, 0) };
     private readonly CheckBox previewToggle = new() { Text = "Preview with sample data (panel only)", AutoSize = true, Dock = DockStyle.Fill };
     private readonly NumericUpDown panelScale = new() { Minimum = 75, Maximum = 175, Increment = 25, Value = 100, Dock = DockStyle.Fill };
     private readonly Label settingsMessage = LabelFor("Selections and units apply when saved.", 9, false, "muted");
@@ -109,6 +110,8 @@ internal sealed partial class FeederForm
         units.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
         unitsInFiles.MaximumSize = new Size(220, 0);
         units.Controls.Add(unitsInFiles, 0, row); units.SetColumnSpan(unitsInFiles, 2); row++;
+        units.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));
+        units.Controls.Add(startMainMinimized, 0, row); units.SetColumnSpan(startMainMinimized, 2); row++;
         var note = LabelFor("Units apply to files and panel. Missing values remain N/A. Aircraft limits appear when catalog data is available.", 9, false, "muted");
         units.RowStyles.Add(new RowStyle(SizeType.Absolute, 105)); units.Controls.Add(note, 0, row); units.SetColumnSpan(note, 2);
         layout.Controls.Add(units, 1, 1);
@@ -136,6 +139,7 @@ internal sealed partial class FeederForm
         }
         foreach (var (name, selector) in unitSelectors) selector.SelectedItem = typeof(FeederPreferences).GetProperty(name)!.GetValue(p);
         unitsInFiles.Checked = p.IncludeUnits; panelScale.Value = p.PanelScale;
+        startMainMinimized.Checked = p.StartMainMinimized;
     }
     private void MoveChannel(int delta)
     {
@@ -149,7 +153,8 @@ internal sealed partial class FeederForm
     private void SavePreferences()
     {
         channelGrid.EndEdit();
-        var updated = new FeederPreferences { IncludeUnits = unitsInFiles.Checked, PanelScale = (int)panelScale.Value };
+        var updated = new FeederPreferences { IncludeUnits = unitsInFiles.Checked, PanelScale = (int)panelScale.Value,
+            StartMainMinimized = startMainMinimized.Checked };
         foreach (var (name, selector) in unitSelectors) typeof(FeederPreferences).GetProperty(name)!.SetValue(updated, selector.SelectedItem as string);
         updated.TextChannels = channelGrid.Rows.Cast<DataGridViewRow>().Where(r => r.Cells[1].Value is true).Select(r => (string)r.Tag!).ToArray();
         updated.PanelChannels = channelGrid.Rows.Cast<DataGridViewRow>().Where(r => r.Cells[2].Value is true).Select(r => (string)r.Tag!).ToArray();
@@ -157,7 +162,7 @@ internal sealed partial class FeederForm
         {
             updated.Save(PreferencesPath);
             preferences = updated;
-            settingsMessage.Text = "Saved. Units and selections applied to both outputs.";
+            settingsMessage.Text = "Saved. Startup option applies next launch.";
             lastPanelSignature = null;
             Tick();
         }

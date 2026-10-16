@@ -10,6 +10,8 @@ A small Windows x64 application that reads MSFS 2024 through Microsoft's SimConn
 
 [Download the latest release](https://github.com/siglr/WSGStreamFeeder/releases/latest) · [WeSimGlide download page](https://wesimglide.org/otherdata/tools/WSG-Stream-Feeder.html) · [License](LICENSE.md)
 
+**v1.3.3:** Settings includes **Start with the main window minimized**. Enable it and choose **Save settings** to start minimized even after restoring the main window to exit. Off by default, it replaces the main window's last-minimized-state behavior; position, size and maximized placement are still remembered. The capture window continues restoring its own open/closed and minimized state independently. The explicit `--minimized` launch option still takes precedence.
+
 ![WSG Stream Feeder in Dark mode](web/assets/wsg-stream-feeder.png)
 
 ## License

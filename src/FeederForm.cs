@@ -35,7 +35,7 @@ internal sealed partial class FeederForm : Form
         InitializeAppearance();
         ApplyAppearance();
         ShowInTaskbar = true;
-        WindowPlacementBinding.Attach(this, "main-window.json", options.Minimized, restoreMinimized: true);
+        WindowPlacementBinding.Attach(this, "main-window.json", options.Minimized || preferences.StartMainMinimized);
         timer.Tick += (_, _) => Tick();
         Shown += (_, _) =>
         {
